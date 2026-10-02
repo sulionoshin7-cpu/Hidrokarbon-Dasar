@@ -6,9 +6,6 @@
 <meta name="theme-color" content="#070b14">
 <title>HydroQuest — Petualangan Hidrokarbon</title>
 <style>
-/* ============================================================
-   TEMA & RESET
-   ============================================================ */
 :root{
   --bg:#070b14; --bg2:#0d1424; --card:#111a2e; --card2:#16223c;
   --line:#22304d; --line2:#2c3d61;
@@ -33,9 +30,6 @@ p{margin:0 0 8px;}
 ul,ol{margin:6px 0;padding-left:20px;}
 li{margin:3px 0;}
 
-/* ============================================================
-   LAYOUT UTAMA
-   ============================================================ */
 #app{
   max-width:520px;margin:0 auto;height:100dvh;position:relative;
   display:flex;flex-direction:column;overflow:hidden;
@@ -94,9 +88,6 @@ li{margin:3px 0;}
 .tab.on i{transform:translateY(-1px) scale(1.12);}
 .tab:active{transform:scale(.94);}
 
-/* ============================================================
-   KOMPONEN UMUM
-   ============================================================ */
 .card{
   background:linear-gradient(180deg,var(--card),var(--bg2));
   border:1px solid var(--line);border-radius:var(--r);
@@ -136,13 +127,9 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .divider{height:1px;background:var(--line);margin:12px 0;}
 
-/* Progress */
 .pbar{height:8px;border-radius:6px;background:#0a1120;overflow:hidden;border:1px solid var(--line);}
 .pbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width .4s cubic-bezier(.3,1,.4,1);}
 
-/* ============================================================
-   MATERI
-   ============================================================ */
 .acc{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:9px;overflow:hidden;}
 .acc-h{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none;}
 .acc-h .ico{font-size:20px;width:26px;text-align:center;flex:0 0 auto;}
@@ -163,9 +150,6 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .contoh.show .a{display:block;}
 .done-tag{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(52,211,153,.18);color:var(--good);font-weight:700;}
 
-/* ============================================================
-   LAB 3D
-   ============================================================ */
 .gl-wrap{
   position:relative;width:100%;aspect-ratio:1/0.86;min-height:230px;
   border-radius:14px;overflow:hidden;
@@ -181,38 +165,24 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
   padding:1px 3px;border-radius:4px;background:rgba(0,0,0,.32);
 }
 .gl-badges{position:absolute;top:8px;left:8px;right:8px;display:flex;flex-wrap:wrap;gap:5px;}
-.mol-info{
-  margin-top:10px;padding:10px 12px;border-radius:12px;background:#0a1120;border:1px solid var(--line);
-}
+.mol-info{margin-top:10px;padding:10px 12px;border-radius:12px;background:#0a1120;border:1px solid var(--line);}
 .mol-info .f{font-size:19px;font-weight:800;color:var(--neon);letter-spacing:.01em;}
 .mol-info .n{font-size:13.5px;font-weight:700;color:var(--purple);margin-top:2px;}
 .mol-info .m{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 .mol-info .m span{font-size:10.5px;padding:3px 8px;border-radius:8px;background:var(--card2);border:1px solid var(--line);color:var(--muted);}
 .presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
-.presets button{
-  font-size:11.5px;padding:7px 10px;border-radius:20px;background:var(--card2);
-  border:1px solid var(--line2);transition:.15s;
-}
+.presets button{font-size:11.5px;padding:7px 10px;border-radius:20px;background:var(--card2);border:1px solid var(--line2);transition:.15s;}
 .presets button:active{transform:scale(.94);background:rgba(94,234,212,.15);}
 .stepper{display:flex;align-items:center;gap:8px;}
-.stepper button{
-  width:38px;height:38px;border-radius:10px;background:var(--card2);border:1px solid var(--line2);
-  font-size:17px;font-weight:800;display:grid;place-items:center;
-}
+.stepper button{width:38px;height:38px;border-radius:10px;background:var(--card2);border:1px solid var(--line2);font-size:17px;font-weight:800;display:grid;place-items:center;}
 .stepper .val{min-width:38px;text-align:center;font-weight:800;font-size:16px;color:var(--neon);}
 .chiprow{display:flex;gap:6px;flex-wrap:wrap;}
-.chipbtn{
-  font-size:11.5px;font-weight:700;padding:8px 11px;border-radius:10px;
-  background:var(--card2);border:1px solid var(--line2);min-height:38px;
-}
+.chipbtn{font-size:11.5px;font-weight:700;padding:8px 11px;border-radius:10px;background:var(--card2);border:1px solid var(--line2);min-height:38px;}
 .chipbtn.on{background:linear-gradient(135deg,var(--purple),var(--blue));border-color:transparent;color:#08101f;}
 .sub-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
 .sub-item{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:7px 10px;border-radius:9px;background:#0a1120;border:1px solid var(--line);}
 .sub-item button{color:var(--bad);font-size:15px;padding:0 6px;}
 
-/* ============================================================
-   GAMES
-   ============================================================ */
 .stage{
   display:flex;gap:12px;align-items:center;padding:13px;border-radius:14px;
   background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);
@@ -229,10 +199,10 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .stage .body .stars{font-size:13px;letter-spacing:2px;margin-top:4px;color:var(--gold);}
 .stage .go{font-size:22px;color:var(--muted2);padding:6px;}
 
-.fc-wrap{perspective:1000px;margin-bottom:10px;height:170px;}
+.fc-wrap{perspective:1000px;margin-bottom:12px;height:190px;}
 .fc{
   position:relative;width:100%;height:100%;transform-style:preserve-3d;
-  transition:transform .5s cubic-bezier(.3,1.2,.4,1);cursor:pointer;
+  transition:transform .55s cubic-bezier(.3,1.2,.4,1);cursor:pointer;
 }
 .fc.flip{transform:rotateY(180deg);}
 .fc-f,.fc-b{
@@ -240,10 +210,9 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
   display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;
   border:1px solid var(--line2);box-shadow:var(--shadow);
 }
-.fc-f{background:linear-gradient(150deg,#1c2a52,#101a30);font-weight:700;font-size:15px;}
-.fc-b{background:linear-gradient(150deg,#0e3a34,#08201c);transform:rotateY(180deg);font-size:14px;color:var(--neon);font-weight:700;}
-.fc-b .tip{font-size:11.5px;color:var(--muted);font-weight:400;margin-top:8px;}
-.fc-prog{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.fc-f{background:linear-gradient(150deg,#1c2a52,#101a30);font-weight:700;font-size:15px;line-height:1.5;}
+.fc-b{background:linear-gradient(150deg,#0e3a34,#08201c);transform:rotateY(180deg);font-size:15px;color:var(--neon);font-weight:700;line-height:1.5;}
+.fc-b .tip{font-size:11.5px;color:var(--muted);font-weight:400;margin-top:10px;}
 
 .qbox{padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:10px;}
 .qbox .qq{font-size:14.5px;font-weight:700;line-height:1.5;margin-bottom:10px;}
@@ -255,14 +224,11 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .opt:active{transform:scale(.98);}
 .opt.right{background:rgba(52,211,153,.2);border-color:var(--good);color:#c9ffe9;}
 .opt.wrong{background:rgba(248,113,113,.18);border-color:var(--bad);color:#ffd5d5;}
-.opt:disabled{opacity:.75;}
+.opt:disabled{opacity:.85;}
 .fb{padding:12px;border-radius:12px;font-size:12.5px;margin-top:10px;line-height:1.55;display:none;}
 .fb.on{display:block;animation:fadeUp .22s ease both;}
 .fb.ok{background:rgba(52,211,153,.13);border:1px solid rgba(52,211,153,.4);color:#c9ffe9;}
 .fb.no{background:rgba(248,113,113,.13);border:1px solid rgba(248,113,113,.4);color:#ffd5d5;}
-
-.timer{height:6px;border-radius:6px;background:#0a1120;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);}
-.timer>i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--gold),var(--bad));transition:width 1s linear;}
 
 .hud{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;}
 .hud .st{color:var(--orange);}
@@ -272,9 +238,6 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .result .stars{font-size:34px;letter-spacing:6px;color:var(--gold);margin:8px 0;}
 .result .lbl{font-size:13px;color:var(--muted);}
 
-/* ============================================================
-   PROFIL
-   ============================================================ */
 .hero{
   padding:18px;border-radius:18px;text-align:center;
   background:linear-gradient(140deg,#241a52,#0e1e3e);
@@ -300,9 +263,6 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 .riwayat .it{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:9px;background:#0a1120;border:1px solid var(--line);}
 .riwayat .it .tm{font-size:10px;color:var(--muted2);flex:0 0 auto;}
 
-/* ============================================================
-   MODAL / TOAST
-   ============================================================ */
 #toast{position:fixed;left:0;right:0;bottom:96px;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:80;pointer-events:none;padding:0 14px;}
 .toast{
   max-width:480px;padding:10px 15px;border-radius:12px;font-size:12.5px;font-weight:700;
@@ -355,7 +315,6 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
 
   <main id="views">
 
-    <!-- ============ BERANDA ============ -->
     <section class="view on" id="v-home">
       <div class="hero">
         <div style="font-size:44px;line-height:1">⚗️</div>
@@ -399,14 +358,12 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
       </div>
     </section>
 
-    <!-- ============ MATERI ============ -->
     <section class="view" id="v-materi">
       <div class="sec-title">📘 Materi Hidrokarbon</div>
       <p class="tiny" style="margin-bottom:10px">Ketuk setiap kartu untuk membuka. Tandai <b>sudah dibaca</b> untuk mengumpulkan XP.</p>
       <div id="materiList"></div>
     </section>
 
-    <!-- ============ LAB 3D ============ -->
     <section class="view" id="v-lab">
       <div class="sec-title">🧪 Laboratorium Molekul 3D</div>
 
@@ -492,7 +449,6 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
       </div>
     </section>
 
-    <!-- ============ GAMES ============ -->
     <section class="view" id="v-games">
       <div id="gamesHome">
         <div class="sec-title">🎮 Arena Permainan</div>
@@ -502,13 +458,16 @@ input[type=text]:focus,select:focus{border-color:var(--neon);}
       <div id="gamePlay" style="display:none"></div>
     </section>
 
-    <!-- ============ PROFIL ============ -->
     <section class="view" id="v-profil">
       <div class="sec-title">🏆 Profil &amp; Pencapaian</div>
 
       <div class="hero">
         <div class="avatar">🧑‍🔬</div>
         <input type="text" id="namaInput" placeholder="Tulis namamu di sini…" style="text-align:center;font-weight:700">
+        <div class="chiprow" id="genderProfil" style="justify-content:center;margin-top:8px">
+          <button class="chipbtn" data-gp="L">♂ Laki-laki</button>
+          <button class="chipbtn" data-gp="P">♀ Perempuan</button>
+        </div>
         <div class="tiny" style="margin-top:6px" id="profilSub">Kelas XII · SMA Santo Paulus Pontianak</div>
         <div style="margin-top:12px">
           <div class="tiny" style="text-align:left;margin-bottom:4px"><span id="pLvTxt">Level 1</span> · <span id="pXpTxt">0 / 100 XP</span></div>
@@ -624,6 +583,11 @@ function seedFrom(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.cha
 
 function vibrate(ms){ if (navigator.vibrate) try{navigator.vibrate(ms);}catch(e){} }
 
+/* Fisher–Yates: acak in-place lalu kembalikan array */
+function shuffle(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+/* Salinan acak tanpa menyentuh array asli */
+function shuffleCopy(a){ return shuffle([...a]); }
+
 let audioCtx = null;
 function beep(freq=440, dur=0.09, type='sine', vol=0.06){
   if (!Store.state?.pengaturan?.suara) return;
@@ -651,7 +615,7 @@ const sfx = {
    ============================================================ */
 const defaultState = () => ({
   version: CFG.VERSION,
-  siswa: { nama:'', kelas:'XII', sekolah: CFG.SEKOLAH },
+  siswa: { nama:'', gender:'', kelas:'XII', sekolah: CFG.SEKOLAH },
   progres: { xp:0, level:1, nyawa:3, materiDibaca:[], molekulDisimpan:[] },
   games: { stage1:null, stage2:null, stage3:null, stage4:null },
   badges: [],
@@ -748,7 +712,6 @@ const Store = {
   },
 };
 
-/* --- XP & Level --- */
 function xpForLevel(lv){ return 100 * lv * (lv+1) / 2; }
 function levelFromXp(xp){ let lv=1; while (xp >= xpForLevel(lv)) lv++; return lv; }
 
@@ -778,7 +741,6 @@ function logActivity(teks){
   Store.save();
 }
 
-/* --- Badge --- */
 const BADGES = [
   { id:'pemula',   ikon:'🌱', nama:'Pemula',        desc:'Mulai belajar',        cek:s=>true },
   { id:'kartu',    ikon:'🃏', nama:'Kartu Kilat',   desc:'Stage 1 selesai',      cek:s=>!!s.games.stage1?.selesai },
@@ -907,7 +869,6 @@ function isCC(struct, b){
   return A && B && A.el==='C' && B.el==='C';
 }
 
-/* --- TATA NAMA IUPAC --- */
 const CHAIN_PREFIX = ['met','et','prop','but','pent','heks','hept','okt','non','dek'];
 
 function ccAdjacency(struct){
@@ -1029,7 +990,7 @@ function iupacName(struct){
     if (!best || cmpLocant(pick.loc, best.loc) < 0) best = { ...pick, len:c.len };
   }
 
-  const path = best.path, loc = best.loc;
+  const path = best.path;
   const idx = {}; path.forEach((id,i)=>idx[id]=i+1);
 
   let multOrder = 1, multPos = null;
@@ -1042,7 +1003,6 @@ function iupacName(struct){
   const base = CHAIN_PREFIX[Math.min(path.length,10)-1];
   const parent = base + suffix;
 
-  // kumpulkan substituen (hanya atom non-H di luar rantai utama)
   const subs = [];
   for (const id of path){
     for (const b of struct.bonds){
@@ -1061,10 +1021,8 @@ function iupacName(struct){
     }
   }
 
-  // urut abjad (base), lalu posisi
   subs.sort((a,b) => a.sort.localeCompare(b.sort) || a.pos - b.pos);
 
-  // gabung posisi dengan multiplier berdasarkan nama yang sama
   const grouped = [];
   for (const s of subs){
     const last = grouped[grouped.length-1];
@@ -1072,23 +1030,14 @@ function iupacName(struct){
     else grouped.push({ base:s.base, sort:s.sort, positions:[s.pos] });
   }
 
-  /* ============================================================
-     AWALAN PENGALI IUPAC
-     1 cabang  → tanpa awalan     contoh: 2-metilpropana
-     2 cabang  → di-              contoh: 2,2-dimetilpropana
-     3 cabang  → tri-             contoh: 2,2,3-trimetilbutana
-     4 cabang  → tetra-
-     5 cabang  → penta-
-     PENTING: posisi yang sama TIDAK di-dedupe (mis. "2,2-"),
-     karena dua cabang sejenis di karbon yang sama tetap ditulis
-     berulang sesuai aturan IUPAC.
-     ============================================================ */
+  /* AWALAN PENGALI IUPAC:
+     1 → tanpa awalan, 2 → di-, 3 → tri-, 4 → tetra-, 5 → penta-
+     Posisi berulang TIDAK di-dedupe (2,2-dimetil..., 2,2-dikloro...) */
   const MULT = ['', 'di', 'tri', 'tetra', 'penta'];
   const subStr = grouped.map(g => {
-    // urutkan posisi TANPA menghapus duplikat
     const pos = g.positions.slice().sort((a, b) => a - b);
-    const n = pos.length;                                       // jumlah cabang sejenis
-    const m = n >= 1 ? (MULT[Math.min(n, 5) - 1] || '') : '';   // indeks 0 = tanpa awalan
+    const n = pos.length;
+    const m = n >= 1 ? (MULT[Math.min(n, 5) - 1] || '') : '';
     return `${pos.join(',')}-${m}${g.base}`;
   }).join('-');
 
@@ -1099,7 +1048,6 @@ function iupacName(struct){
   return nama.charAt(0).toUpperCase() + nama.slice(1);
 }
 
-/* --- Layout 3D --- */
 function computeLayout(struct){
   const N = struct.atoms.length;
   const idx = {}; struct.atoms.forEach((a,i)=>idx[a.id]=i);
@@ -1185,7 +1133,6 @@ function computeLayout(struct){
   return struct;
 }
 
-/* --- Kanonikalisasi untuk Stage 3 --- */
 function canonicalForm(struct){
   const adj = {};
   struct.atoms.filter(a=>a.el!=='H').forEach(a => adj[a.id] = []);
@@ -1858,18 +1805,14 @@ function renderBuilder(){
   const bp = $('#bBranchPos');
   if (builder.branchType){
     let html = '';
-    for (let i=1;i<=builder.n;i++){
-      html += `<button class="chipbtn" data-bpos="${i}">C${i}</button>`;
-    }
+    for (let i=1;i<=builder.n;i++) html += `<button class="chipbtn" data-bpos="${i}">C${i}</button>`;
     bp.innerHTML = html;
   } else bp.innerHTML = '<span class="tiny">Pilih jenis cabang dahulu.</span>';
 
   const hp = $('#bHaloPos');
   if (builder.haloType){
     let html = '';
-    for (let i=1;i<=builder.n;i++){
-      html += `<button class="chipbtn" data-hpos="${i}">C${i}</button>`;
-    }
+    for (let i=1;i<=builder.n;i++) html += `<button class="chipbtn" data-hpos="${i}">C${i}</button>`;
     hp.innerHTML = html;
   } else hp.innerHTML = '<span class="tiny">Pilih jenis halogen dahulu.</span>';
 
@@ -1905,29 +1848,30 @@ function renderPresets(){
    12. GAMES
    ============================================================ */
 const STAGES = [
-  { id:'stage1', no:1, nama:'Kartu Kilat', desc:'Buka tutup kartu konsep hidrokarbon', tipe:'flash' },
-  { id:'stage2', no:2, nama:'Tebak Nama',  desc:'Tentukan nama IUPAC dari struktur',  tipe:'pilih' },
+  { id:'stage1', no:1, nama:'Kartu Kilat', desc:'Kuis konsep hidrokarbon pilihan ganda', tipe:'flash' },
+  { id:'stage2', no:2, nama:'Tebak Nama',  desc:'Tentukan nama IUPAC dari struktur',     tipe:'pilih' },
   { id:'stage3', no:3, nama:'Bangun Struktur', desc:'Susun struktur dari nama senyawa', tipe:'bangun' },
-  { id:'stage4', no:4, nama:'Isomer Cepat', desc:'Hitung jumlah isomer struktural',  tipe:'pilih' },
+  { id:'stage4', no:4, nama:'Isomer Cepat', desc:'Hitung jumlah isomer struktural',     tipe:'pilih' },
 ];
 
+/* Kartu Kilat = kuis pilihan ganda (jawaban ada di kartu belakang). */
 const FLASHCARDS = [
-  { q:'Rumus umum alkana?', a:'CnH2n+2', tip:'Semua ikatan C–C tunggal (jenuh).' },
-  { q:'Rumus umum alkena?', a:'CnH2n', tip:'Mengandung satu ikatan rangkap dua C=C.' },
-  { q:'Rumus umum alkuna?', a:'CnH2n−2', tip:'Mengandung satu ikatan rangkap tiga C≡C.' },
-  { q:'Gugus fungsi haloalkana?', a:'–X (F, Cl, Br, I)', tip:'Satu atau lebih H diganti halogen.' },
-  { q:'Nama IUPAC CH₃–CH₂–CH₃?', a:'Propana', tip:'Rantai lurus 3 karbon.' },
-  { q:'Reaksi khas alkana?', a:'Substitusi', tip:'Contoh: CH₄ + Cl₂ → CH₃Cl + HCl dengan UV.' },
-  { q:'Reaksi khas alkena &amp; alkuna?', a:'Adisi', tip:'Menambahkan atom pada ikatan rangkap.' },
-  { q:'Fungsi uji air bromin?', a:'Membedakan senyawa jenuh &amp; tak jenuh', tip:'Air bromin memudar pada alkena/alkuna.' },
-  { q:'Nama dagang etuna?', a:'Asetilena', tip:'Dipakai untuk las karbit.' },
-  { q:'Berapa isomer C₄H₁₀?', a:'2 isomer', tip:'n-butana dan 2-metilpropana.' },
-  { q:'Kegunaan kloroform (CHCl₃)?', a:'Pelarut organik', tip:'Dahulu dipakai sebagai anestesi.' },
-  { q:'Apa itu freon?', a:'Haloalkana (CFC)', tip:'Pendingin yang dilarang karena merusak ozon.' },
-  { q:'Monomer pembentuk PVC?', a:'Vinil klorida (kloroetena)', tip:'CH₂=CH–Cl.' },
-  { q:'Nama IUPAC CH₃–CH(CH₃)–CH₃?', a:'2-Metilpropana', tip:'Rantai terpanjang 3 C, cabang di C2.' },
-  { q:'Alkena paling sederhana?', a:'Etena (C₂H₄)', tip:'Dahulu dipakai mematangkan buah.' },
-  { q:'Derajat ketidakjenuhan C₅H₁₀?', a:'1', tip:'(2×5 + 2 − 10)/2 = 1.' },
+  { q:'Rumus umum alkana?',                       a:'CnH2n+2',                    opts:['CnH2n+2','CnH2n','CnH2n−2','CnH2n+1'],                     tip:'Semua ikatan C–C tunggal (jenuh).' },
+  { q:'Rumus umum alkena?',                       a:'CnH2n',                      opts:['CnH2n','CnH2n+2','CnH2n−2','CnH2n+1'],                     tip:'Mengandung satu ikatan rangkap dua C=C.' },
+  { q:'Rumus umum alkuna?',                       a:'CnH2n−2',                    opts:['CnH2n−2','CnH2n','CnH2n+2','CnH2n+1'],                     tip:'Mengandung satu ikatan rangkap tiga C≡C.' },
+  { q:'Gugus fungsi haloalkana?',                 a:'–X (F, Cl, Br, I)',          opts:['–X (F, Cl, Br, I)','–OH','–COOH','–CHO'],                  tip:'Satu atau lebih atom H diganti halogen.' },
+  { q:'Nama IUPAC CH₃–CH₂–CH₃?',                  a:'Propana',                    opts:['Propana','Etana','Butana','Metana'],                       tip:'Rantai lurus 3 atom karbon.' },
+  { q:'Reaksi khas alkana?',                      a:'Substitusi',                 opts:['Substitusi','Adisi','Eliminasi','Polimerisasi'],           tip:'Contoh: CH₄ + Cl₂ → CH₃Cl + HCl dengan UV.' },
+  { q:'Reaksi khas alkena & alkuna?',             a:'Adisi',                      opts:['Adisi','Substitusi','Eliminasi','Oksidasi'],               tip:'Menambahkan atom pada ikatan rangkap.' },
+  { q:'Fungsi uji air bromin?',                   a:'Membedakan jenuh & tak jenuh', opts:['Membedakan jenuh & tak jenuh','Menentukan titik didih','Mengukur pH','Menghitung isomer'], tip:'Air bromin memudar pada alkena/alkuna.' },
+  { q:'Nama dagang etuna?',                       a:'Asetilena',                  opts:['Asetilena','Etilena','Metilena','Formalin'],               tip:'Dipakai untuk las karbit.' },
+  { q:'Berapa isomer C₄H₁₀?',                     a:'2 isomer',                   opts:['2 isomer','3 isomer','4 isomer','5 isomer'],               tip:'n-butana dan 2-metilpropana.' },
+  { q:'Kegunaan kloroform (CHCl₃)?',              a:'Pelarut organik',            opts:['Pelarut organik','Bahan bakar','Pupuk','Detergen'],        tip:'Dahulu dipakai sebagai anestesi.' },
+  { q:'Apa itu freon?',                           a:'Haloalkana (CFC)',           opts:['Haloalkana (CFC)','Alkohol','Asam karboksilat','Alkena'],  tip:'Pendingin yang dilarang karena merusak ozon.' },
+  { q:'Monomer pembentuk PVC?',                   a:'Vinil klorida (kloroetena)', opts:['Vinil klorida (kloroetena)','Etena','Propilena','Stirena'], tip:'CH₂=CH–Cl.' },
+  { q:'Nama IUPAC CH₃–CH(CH₃)–CH₃?',              a:'2-Metilpropana',             opts:['2-Metilpropana','Propana','Butana','2-Metilbutana'],       tip:'Rantai terpanjang 3 C, cabang di C2.' },
+  { q:'Alkena paling sederhana?',                 a:'Etena (C₂H₄)',               opts:['Etena (C₂H₄)','Metana (CH₄)','Propana (C₃H₈)','Etuna (C₂H₂)'], tip:'Dahulu dipakai mematangkan buah.' },
+  { q:'Derajat ketidakjenuhan C₅H₁₀?',            a:'1',                          opts:['1','2','3','0'],                                           tip:'(2×5 + 2 − 10) / 2 = 1.' },
 ];
 
 const STAGE2_Q = [
@@ -1989,6 +1933,51 @@ function renderGamesHome(){
   }).join('');
 }
 
+/* --- Modal data peserta wajib sebelum memulai game --- */
+function requireIdentity(callback){
+  const s = Store.state;
+  if (s.siswa.nama && s.siswa.gender){
+    callback();
+    return;
+  }
+  let genderPilih = s.siswa.gender || '';
+  modal(`
+    <h3>📝 Data Peserta</h3>
+    <p class="muted">Nama &amp; jenis kelamin akan dicetak pada sertifikatmu.</p>
+    <label class="tiny" style="display:block;margin-top:12px">Nama Lengkap</label>
+    <input type="text" id="preNama" value="${esc(s.siswa.nama||'')}" placeholder="Nama lengkap" style="margin-top:4px">
+    <label class="tiny" style="display:block;margin-top:12px">Jenis Kelamin</label>
+    <div class="chiprow" id="preGender" style="margin-top:6px">
+      <button class="chipbtn ${genderPilih==='L'?'on':''}" data-g="L">♂ Laki-laki</button>
+      <button class="chipbtn ${genderPilih==='P'?'on':''}" data-g="P">♀ Perempuan</button>
+    </div>
+    <div class="grid2" style="margin-top:18px">
+      <button class="btn" id="preCancel">Batal</button>
+      <button class="btn primary" id="preOk">Mulai 🎮</button>
+    </div>
+  `);
+  setTimeout(() => { const el = $('#preNama'); if (el && !s.siswa.nama) el.focus(); }, 100);
+  $('#preCancel').onclick = closeModal;
+  $$('#preGender .chipbtn').forEach(b => b.onclick = () => {
+    genderPilih = b.dataset.g;
+    $$('#preGender .chipbtn').forEach(x => x.classList.toggle('on', x.dataset.g === genderPilih));
+    sfx.tap();
+  });
+  $('#preOk').onclick = () => {
+    const nama = $('#preNama').value.trim();
+    if (!nama){ toast('Nama wajib diisi', 'no'); return; }
+    if (!genderPilih){ toast('Pilih jenis kelamin dulu', 'no'); return; }
+    Store.state.siswa.nama = nama;
+    Store.state.siswa.gender = genderPilih;
+    Store.save();
+    const ni = $('#namaInput'); if (ni) ni.value = nama;
+    renderProfil();
+    closeModal();
+    toast('Data tersimpan ✅', 'ok');
+    callback();
+  };
+}
+
 function startStage(id){
   const s = Store.state;
   const idx = STAGES.findIndex(x => x.id === id);
@@ -1997,25 +1986,29 @@ function startStage(id){
     return;
   }
   const st = STAGES[idx];
+
+  /* Bangun data + acak pilihan jawaban agar tidak selalu A */
   let data = [];
-  if (st.tipe === 'flash') data = shuffle([...FLASHCARDS]);
-  else if (st.id === 'stage2') data = shuffle([...STAGE2_Q]);
-  else if (st.id === 'stage3') data = shuffle([...STAGE3_Q]);
-  else if (st.id === 'stage4') data = shuffle([...STAGE4_Q]);
+  if (st.tipe === 'flash'){
+    data = shuffle([...FLASHCARDS]).map(c => ({ ...c, opts: shuffleCopy(c.opts) }));
+  } else if (st.id === 'stage2'){
+    data = shuffle([...STAGE2_Q]).map(q => ({ ...q, opts: shuffleCopy(q.opts) }));
+  } else if (st.id === 'stage3'){
+    data = shuffle([...STAGE3_Q]);
+  } else if (st.id === 'stage4'){
+    data = shuffle([...STAGE4_Q]).map(q => ({ ...q, opts: shuffleCopy(q.opts) }));
+  }
 
   game = {
     stage: st, data, idx:0, benar:0, salah:0,
     nyawa: 3, streak: 0, maxStreak: 0, xp: 0,
     mulai: Date.now(), nyawaUtuh: true,
-    paham: new Set(),
     build: { n:1, unsat:[], subs:[], branchType:null, haloType:null },
   };
   $('#gamesHome').style.display = 'none';
   $('#gamePlay').style.display = 'block';
   renderGame();
 }
-
-function shuffle(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 function renderGame(){
   if (!game) return;
@@ -2031,26 +2024,51 @@ function renderGame(){
       <span class="st">❤️ ${game.nyawa} · 🔥 ${game.streak}</span>
     </div>`;
 
+  /* ---------- STAGE 1: Kartu Kilat (kuis pilihan ganda) ---------- */
   if (st.tipe === 'flash'){
     const c = game.data[game.idx];
+    const optsHtml = c.opts.map((o,i) =>
+      `<button class="opt" data-fopt="${i}">${String.fromCharCode(65+i)}. ${esc(o)}</button>`
+    ).join('');
+
     box.innerHTML = head + `
       <div class="fc-wrap"><div class="fc" id="fc">
-        <div class="fc-f">${c.q}<div class="tiny" style="margin-top:12px">ketuk untuk membalik</div></div>
-        <div class="fc-b">${c.a}<div class="tip">${c.tip}</div></div>
+        <div class="fc-f">
+          <div class="tiny" style="color:var(--muted);margin-bottom:8px;letter-spacing:.1em">PERTANYAAN</div>
+          ${c.q}
+          <div class="tiny" style="margin-top:14px;color:var(--muted2)">pilih jawaban di bawah 👇</div>
+        </div>
+        <div class="fc-b">
+          <div class="tiny" style="color:var(--muted);margin-bottom:8px;letter-spacing:.1em">JAWABAN BENAR</div>
+          ${esc(c.a)}
+          <div class="tip">${c.tip||''}</div>
+        </div>
       </div></div>
-      <div class="grid2">
-        <button class="btn good" id="fcPaham">✓ Paham (+8 XP)</button>
-        <button class="btn warn" id="fcUlang">↻ Ulangi</button>
-      </div>
-      <button class="btn ghost block" id="fcKeluar" style="margin-top:8px">Keluar</button>
+      <div class="opts" id="fOpts">${optsHtml}</div>
+      <div class="fb" id="fb"></div>
+      <button class="btn ghost block" id="fcKeluar" style="margin-top:10px">Keluar</button>
     `;
-    $('#fc').onclick = () => { $('#fc').classList.toggle('flip'); sfx.tap(); };
-    $('#fcPaham').onclick = () => { game.paham.add(game.idx); game.benar++; game.streak++; game.maxStreak = Math.max(game.maxStreak, game.streak); addXP(8); sfx.ok(); nextQ(); };
-    $('#fcUlang').onclick = () => { game.data.push(game.data[game.idx]); sfx.tap(); nextQ(); };
+
+    $$('.opt', box).forEach((btn, i) => btn.onclick = () => {
+      const ok = c.opts[i] === c.a;
+      $$('.opt', box).forEach((x, j) => {
+        x.disabled = true;
+        if (c.opts[j] === c.a) x.classList.add('right');
+      });
+      if (!ok) btn.classList.add('wrong');
+      $('#fc').classList.add('flip');
+      const fb = $('#fb');
+      fb.className = 'fb on ' + (ok ? 'ok' : 'no');
+      fb.innerHTML = (ok ? '✅ Tepat! ' : '❌ Belum tepat. ')
+        + `Jawaban benar: <b>${esc(c.a)}</b>. ${c.tip||''}`;
+      handleAnswer(ok);
+    });
+
     $('#fcKeluar').onclick = () => exitGame();
     return;
   }
 
+  /* ---------- STAGE 2: Tebak Nama ---------- */
   if (st.id === 'stage2'){
     const q = game.data[game.idx];
     const struct = buildStructure(q.spec);
@@ -2070,6 +2088,7 @@ function renderGame(){
     return;
   }
 
+  /* ---------- STAGE 3: Bangun Struktur ---------- */
   if (st.id === 'stage3'){
     const q = game.data[game.idx];
     const bb = game.build;
@@ -2132,6 +2151,7 @@ function renderGame(){
     return;
   }
 
+  /* ---------- STAGE 4: Isomer Cepat ---------- */
   if (st.id === 'stage4'){
     const q = game.data[game.idx];
     const opts = q.opts.map((o,i) => `<button class="opt" data-opt="${i}">${o} isomer</button>`).join('');
@@ -2245,7 +2265,7 @@ function handleAnswer(ok){
       return;
     }
   }
-  setTimeout(nextQ, ok ? 900 : 1400);
+  setTimeout(nextQ, ok ? 900 : 1500);
 }
 
 function nextQ(){
@@ -2308,7 +2328,7 @@ function renderResult(gagal=false){
     </div>`;
 
   const cur = game.stage;
-  $('#rUlang').onclick = () => { $('#gamePlay').style.display='none'; $('#gamesHome').style.display='block'; startStage(cur.id); };
+  $('#rUlang').onclick = () => { $('#gamePlay').style.display='none'; $('#gamesHome').style.display='block'; requireIdentity(() => startStage(cur.id)); };
   const ln = $('#rLanjut');
   if (ln) ln.onclick = () => { $('#gamePlay').style.display='none'; $('#gamesHome').style.display='block'; startStage(STAGES[cur.no].id); };
   const hm = $('#rHome');
@@ -2395,6 +2415,10 @@ function buatSertifikat(){
     $('#namaInput').focus();
     return;
   }
+  if (!s.siswa.gender){
+    toast('Pilih jenis kelamin dulu di kolom atas', 'no');
+    return;
+  }
 
   const cvs = document.createElement('canvas');
   cvs.width = 1200; cvs.height = 850;
@@ -2446,18 +2470,25 @@ function buatSertifikat(){
   ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(600 - nw/2 - 30, 358); ctx.lineTo(600 + nw/2 + 30, 358); ctx.stroke();
 
+  const genderTxt = s.siswa.gender === 'L' ? 'Putra' : s.siswa.gender === 'P' ? 'Putri' : '';
+  if (genderTxt){
+    ctx.fillStyle = '#5eead4';
+    ctx.font = 'italic 500 18px system-ui, sans-serif';
+    ctx.fillText(`(${genderTxt})`, 600, 384);
+  }
+
   ctx.fillStyle = '#cbd7f0';
   ctx.font = '400 19px system-ui, sans-serif';
-  ctx.fillText('telah berhasil menyelesaikan pembelajaran gamifikasi', 600, 402);
+  ctx.fillText('telah berhasil menyelesaikan pembelajaran gamifikasi', 600, 418);
   ctx.fillStyle = '#a78bfa'; ctx.font = '700 26px system-ui, sans-serif';
-  ctx.fillText('HIDROKARBON — Alkana, Alkena, Alkuna & Haloalkana', 600, 440);
+  ctx.fillText('HIDROKARBON — Alkana, Alkena, Alkuna & Haloalkana', 600, 456);
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#8fa3c8'; ctx.font = '600 16px system-ui, sans-serif';
-  ctx.fillText('CAPAIAN STAGE', 140, 500);
+  ctx.fillText('CAPAIAN STAGE', 140, 512);
 
-  let y = 532;
-  STAGES.forEach((st, i) => {
+  let y = 542;
+  STAGES.forEach((st) => {
     const g = s.games[st.id];
     ctx.fillStyle = g?.selesai ? '#34d399' : '#475569';
     ctx.font = '600 17px system-ui, sans-serif';
@@ -2485,17 +2516,17 @@ function buatSertifikat(){
 
   ctx.textAlign = 'right';
   ctx.fillStyle = '#8fa3c8'; ctx.font = '400 15px system-ui, sans-serif';
-  ctx.fillText('Pontianak, ' + tglTxt, 1050, 700);
+  ctx.fillText('Pontianak, ' + tglTxt, 1050, 710);
   ctx.fillStyle = '#ffffff'; ctx.font = '700 22px system-ui, sans-serif';
-  ctx.fillText(CFG.GURU, 1050, 740);
+  ctx.fillText(CFG.GURU, 1050, 750);
   ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(760, 752); ctx.lineTo(1050, 752); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(760, 762); ctx.lineTo(1050, 762); ctx.stroke();
   ctx.fillStyle = '#8fa3c8'; ctx.font = '400 14px system-ui, sans-serif';
-  ctx.fillText('Guru Kimia · ' + CFG.SEKOLAH, 1050, 774);
+  ctx.fillText('Guru Kimia · ' + CFG.SEKOLAH, 1050, 784);
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#475569'; ctx.font = '400 12px system-ui, sans-serif';
-  ctx.fillText('No. ' + s.sertifikat.nomor, 140, 790);
+  ctx.fillText('No. ' + s.sertifikat.nomor, 140, 800);
 
   const area = $('#certArea');
   area.innerHTML = `
@@ -2615,7 +2646,11 @@ function renderProfil(){
 
   const ni = $('#namaInput');
   if (document.activeElement !== ni) ni.value = s.siswa.nama || '';
-  $('#profilSub').textContent = `${s.siswa.kelas} · ${s.siswa.sekolah}`;
+
+  $$('#genderProfil .chipbtn').forEach(b => b.classList.toggle('on', b.dataset.gp === s.siswa.gender));
+
+  const gTxt = s.siswa.gender === 'L' ? 'Putra' : s.siswa.gender === 'P' ? 'Putri' : '';
+  $('#profilSub').textContent = [gTxt, s.siswa.kelas, s.siswa.sekolah].filter(Boolean).join(' · ');
 
   const st = s.statistik;
   const akurasi = st.totalSoal ? Math.round((st.totalBenar/st.totalSoal)*100) : 0;
@@ -2681,6 +2716,13 @@ function bindAll(){
   $('#namaInput').addEventListener('input', e => {
     Store.state.siswa.nama = e.target.value;
     Store.save();
+  });
+  $('#genderProfil').addEventListener('click', e => {
+    const b = e.target.closest('[data-gp]'); if (!b) return;
+    Store.state.siswa.gender = b.dataset.gp;
+    Store.save();
+    sfx.tap();
+    renderProfil();
   });
 
   $('#materiList').addEventListener('click', e => {
@@ -2836,9 +2878,10 @@ function bindAll(){
     toast('Gambar 3D diunduh 📷', 'ok');
   };
 
+  /* Buka stage → wajib isi identitas dulu */
   $('#stageList').addEventListener('click', e => {
     const s = e.target.closest('[data-stage]'); if (!s) return;
-    startStage(s.dataset.stage);
+    requireIdentity(() => startStage(s.dataset.stage));
   });
 
   $('#btnCert').onclick = buatSertifikat;
