@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#070b14">
+<title>HydroQuest — Petualangan Hidrokarbon</title>
+<style>
+/* ============================================================
+   TEMA & RESET
+   ============================================================ */
+:root{
+  --bg:#070b14; --bg2:#0d1424; --card:#111a2e; --card2:#16223c;
+  --line:#22304d; --line2:#2c3d61;
+  --text:#e8eefc; --muted:#8fa3c8; --muted2:#5f7398;
+  --neon:#5eead4; --purple:#a78bfa; --blue:#60a5fa; --cyan:#22d3ee;
+  --orange:#fb923c; --pink:#f472b6;
+  --good:#34d399; --bad:#f87171; --gold:#fbbf24;
+  --r:16px; --r2:12px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#04070e;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--text);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+input,select,textarea{font-family:inherit;font-size:16px;color:inherit;}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em;}
+p{margin:0 0 8px;}
+ul,ol{margin:6px 0;padding-left:20px;}
+li{margin:3px 0;}
+
+/* ============================================================
+   LAYOUT UTAMA
+   ============================================================ */
+#app{
+  max-width:520px;margin:0 auto;height:100dvh;position:relative;
+  display:flex;flex-direction:column;overflow:hidden;
+  background:
+    radial-gradient(900px 420px at 50% -8%, #16224a 0%, transparent 62%),
+    radial-gradient(600px 340px at 100% 108%, #1a1140 0%, transparent 60%),
+    var(--bg);
+  padding-top:env(safe-area-inset-top);
+}
+#topbar{
+  flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:10px 14px 8px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(10,16,30,.96), rgba(10,16,30,.75));
+  backdrop-filter:blur(10px);
+}
+.brand{display:flex;align-items:center;gap:9px;min-width:0;}
+.logo{
+  width:34px;height:34px;flex:0 0 auto;border-radius:11px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));font-size:18px;
+  box-shadow:0 0 16px rgba(94,234,212,.4);
+}
+.brand .t1{font-size:14px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.brand .t2{font-size:10px;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;}
+.chips{display:flex;gap:5px;flex:0 0 auto;}
+.chip{
+  font-size:11px;font-weight:700;padding:4px 8px;border-radius:20px;
+  background:var(--card2);border:1px solid var(--line);white-space:nowrap;
+}
+.chip.xp{color:var(--neon);border-color:rgba(94,234,212,.35);}
+.chip.lv{color:var(--purple);border-color:rgba(167,139,250,.35);}
+.chip.hp{color:var(--pink);border-color:rgba(244,114,182,.35);}
+
+#views{
+  flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  padding:12px 14px 96px;scroll-behavior:smooth;
+}
+.view{display:none;animation:fadeUp .26s ease both;}
+.view.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+#tabbar{
+  position:absolute;left:0;right:0;bottom:0;
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg, rgba(9,14,26,.82), rgba(9,14,26,.99) 42%);
+  backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:20;
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  min-height:50px;border-radius:12px;color:var(--muted2);font-size:10px;font-weight:600;
+  transition:color .18s, background .18s, transform .18s;
+}
+.tab i{font-style:normal;font-size:19px;line-height:1;transition:transform .2s;}
+.tab.on{color:var(--neon);background:rgba(94,234,212,.09);}
+.tab.on i{transform:translateY(-1px) scale(1.12);}
+.tab:active{transform:scale(.94);}
+
+/* ============================================================
+   KOMPONEN UMUM
+   ============================================================ */
+.card{
+  background:linear-gradient(180deg,var(--card),var(--bg2));
+  border:1px solid var(--line);border-radius:var(--r);
+  padding:14px;margin-bottom:12px;box-shadow:var(--shadow);
+}
+.card h3{font-size:15px;display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.sec-title{font-size:16px;font-weight:800;margin:4px 0 10px;display:flex;align-items:center;gap:8px;}
+.muted{color:var(--muted);font-size:13px;}
+.tiny{font-size:11.5px;color:var(--muted2);}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-height:44px;padding:10px 14px;border-radius:12px;font-weight:700;font-size:13.5px;
+  background:var(--card2);border:1px solid var(--line2);color:var(--text);
+  transition:transform .12s, background .18s, border-color .18s;
+}
+.btn:active{transform:scale(.96);}
+.btn.primary{background:linear-gradient(135deg,var(--purple),var(--blue));border-color:transparent;color:#0a0e1a;box-shadow:0 6px 18px rgba(96,165,250,.28);}
+.btn.good{background:linear-gradient(135deg,#34d399,#22d3ee);border-color:transparent;color:#04201a;}
+.btn.warn{background:linear-gradient(135deg,#fb923c,#f87171);border-color:transparent;color:#2a0e04;}
+.btn.ghost{background:transparent;}
+.btn.block{width:100%;}
+.btn:disabled{opacity:.42;cursor:not-allowed;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;}
+.row label{font-size:13px;color:var(--muted);}
+.pill{
+  display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;
+  padding:6px 10px;border-radius:20px;background:rgba(10,16,30,.82);
+  border:1px solid var(--line2);backdrop-filter:blur(6px);
+}
+.pill.on{background:rgba(94,234,212,.2);border-color:var(--neon);color:var(--neon);}
+input[type=text],input[type=number],select{
+  width:100%;padding:11px 12px;border-radius:11px;background:#0a1120;
+  border:1px solid var(--line2);outline:none;transition:border-color .18s;
+}
+input[type=text]:focus,select:focus{border-color:var(--neon);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.divider{height:1px;background:var(--line);margin:12px 0;}
+
+/* Progress */
+.pbar{height:8px;border-radius:6px;background:#0a1120;overflow:hidden;border:1px solid var(--line);}
+.pbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width .4s cubic-bezier(.3,1,.4,1);}
+
+/* ============================================================
+   MATERI
+   ============================================================ */
+.acc{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:9px;overflow:hidden;}
+.acc-h{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none;}
+.acc-h .ico{font-size:20px;width:26px;text-align:center;flex:0 0 auto;}
+.acc-h .ttl{flex:1;font-weight:700;font-size:14px;}
+.acc-h .chev{color:var(--muted2);transition:transform .25s;font-size:12px;}
+.acc.on .acc-h .chev{transform:rotate(90deg);}
+.acc-b{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.acc.on .acc-b{max-height:3000px;}
+.acc-inner{padding:0 14px 14px;font-size:13.5px;color:#cbd7f0;}
+.acc-inner h4{font-size:13px;color:var(--neon);margin:12px 0 5px;}
+.acc-inner table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+.acc-inner th,.acc-inner td{border:1px solid var(--line);padding:6px 7px;text-align:left;}
+.acc-inner th{background:#0c1424;color:var(--neon);font-weight:700;}
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:6px;background:rgba(94,234,212,.13);color:var(--neon);margin-right:4px;font-weight:700;}
+.contoh{margin-top:10px;padding:10px;border-radius:11px;background:#0a1120;border:1px dashed var(--line2);}
+.contoh .q{font-weight:700;font-size:12.5px;margin-bottom:6px;}
+.contoh .a{display:none;font-size:12.5px;color:var(--good);margin-top:6px;line-height:1.55;}
+.contoh.show .a{display:block;}
+.done-tag{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(52,211,153,.18);color:var(--good);font-weight:700;}
+
+/* ============================================================
+   LAB 3D
+   ============================================================ */
+.gl-wrap{
+  position:relative;width:100%;aspect-ratio:1/0.86;min-height:230px;
+  border-radius:14px;overflow:hidden;
+  background:radial-gradient(circle at 50% 40%, #14203c, #070d1a 72%);
+  border:1px solid var(--line);touch-action:none;
+}
+#gl{display:block;width:100%;height:100%;}
+.gl-loading{position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:var(--muted);text-align:center;padding:20px;}
+.labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.labels span{
+  position:absolute;transform:translate(-50%,-50%);font-size:10px;font-weight:800;
+  color:#dbeafe;text-shadow:0 0 4px #000,0 0 8px #000;pointer-events:none;
+  padding:1px 3px;border-radius:4px;background:rgba(0,0,0,.32);
+}
+.gl-badges{position:absolute;top:8px;left:8px;right:8px;display:flex;flex-wrap:wrap;gap:5px;}
+.mol-info{
+  margin-top:10px;padding:10px 12px;border-radius:12px;background:#0a1120;border:1px solid var(--line);
+}
+.mol-info .f{font-size:19px;font-weight:800;color:var(--neon);letter-spacing:.01em;}
+.mol-info .n{font-size:13.5px;font-weight:700;color:var(--purple);margin-top:2px;}
+.mol-info .m{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.mol-info .m span{font-size:10.5px;padding:3px 8px;border-radius:8px;background:var(--card2);border:1px solid var(--line);color:var(--muted);}
+.presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+.presets button{
+  font-size:11.5px;padding:7px 10px;border-radius:20px;background:var(--card2);
+  border:1px solid var(--line2);transition:.15s;
+}
+.presets button:active{transform:scale(.94);background:rgba(94,234,212,.15);}
+.stepper{display:flex;align-items:center;gap:8px;}
+.stepper button{
+  width:38px;height:38px;border-radius:10px;background:var(--card2);border:1px solid var(--line2);
+  font-size:17px;font-weight:800;display:grid;place-items:center;
+}
+.stepper .val{min-width:38px;text-align:center;font-weight:800;font-size:16px;color:var(--neon);}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;}
+.chipbtn{
+  font-size:11.5px;font-weight:700;padding:8px 11px;border-radius:10px;
+  background:var(--card2);border:1px solid var(--line2);min-height:38px;
+}
+.chipbtn.on{background:linear-gradient(135deg,var(--purple),var(--blue));border-color:transparent;color:#08101f;}
+.sub-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.sub-item{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:7px 10px;border-radius:9px;background:#0a1120;border:1px solid var(--line);}
+.sub-item button{color:var(--bad);font-size:15px;padding:0 6px;}
+
+/* ============================================================
+   GAMES
+   ============================================================ */
+.stage{
+  display:flex;gap:12px;align-items:center;padding:13px;border-radius:14px;
+  background:linear-gradient(135deg,var(--card),var(--bg2));border:1px solid var(--line);
+  margin-bottom:10px;position:relative;overflow:hidden;
+}
+.stage.locked{opacity:.5;filter:grayscale(.6);}
+.stage .no{
+  width:46px;height:46px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;
+  font-weight:900;font-size:18px;background:linear-gradient(135deg,var(--purple),var(--cyan));color:#08101f;
+}
+.stage .body{flex:1;min-width:0;}
+.stage .body .t{font-weight:800;font-size:14px;}
+.stage .body .d{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.stage .body .stars{font-size:13px;letter-spacing:2px;margin-top:4px;color:var(--gold);}
+.stage .go{font-size:22px;color:var(--muted2);padding:6px;}
+
+.fc-wrap{perspective:1000px;margin-bottom:10px;height:170px;}
+.fc{
+  position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.3,1.2,.4,1);cursor:pointer;
+}
+.fc.flip{transform:rotateY(180deg);}
+.fc-f,.fc-b{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;
+  border:1px solid var(--line2);box-shadow:var(--shadow);
+}
+.fc-f{background:linear-gradient(150deg,#1c2a52,#101a30);font-weight:700;font-size:15px;}
+.fc-b{background:linear-gradient(150deg,#0e3a34,#08201c);transform:rotateY(180deg);font-size:14px;color:var(--neon);font-weight:700;}
+.fc-b .tip{font-size:11.5px;color:var(--muted);font-weight:400;margin-top:8px;}
+.fc-prog{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;}
+
+.qbox{padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:10px;}
+.qbox .qq{font-size:14.5px;font-weight:700;line-height:1.5;margin-bottom:10px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{
+  padding:13px 14px;border-radius:12px;background:var(--card2);border:1px solid var(--line2);
+  text-align:left;font-size:13.5px;font-weight:600;min-height:48px;transition:.18s;
+}
+.opt:active{transform:scale(.98);}
+.opt.right{background:rgba(52,211,153,.2);border-color:var(--good);color:#c9ffe9;}
+.opt.wrong{background:rgba(248,113,113,.18);border-color:var(--bad);color:#ffd5d5;}
+.opt:disabled{opacity:.75;}
+.fb{padding:12px;border-radius:12px;font-size:12.5px;margin-top:10px;line-height:1.55;display:none;}
+.fb.on{display:block;animation:fadeUp .22s ease both;}
+.fb.ok{background:rgba(52,211,153,.13);border:1px solid rgba(52,211,153,.4);color:#c9ffe9;}
+.fb.no{background:rgba(248,113,113,.13);border:1px solid rgba(248,113,113,.4);color:#ffd5d5;}
+
+.timer{height:6px;border-radius:6px;background:#0a1120;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);}
+.timer>i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--gold),var(--bad));transition:width 1s linear;}
+
+.hud{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;}
+.hud .st{color:var(--orange);}
+
+.result{text-align:center;padding:22px 14px;}
+.result .big{font-size:48px;font-weight:900;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.result .stars{font-size:34px;letter-spacing:6px;color:var(--gold);margin:8px 0;}
+.result .lbl{font-size:13px;color:var(--muted);}
+
+/* ============================================================
+   PROFIL
+   ============================================================ */
+.hero{
+  padding:18px;border-radius:18px;text-align:center;
+  background:linear-gradient(140deg,#241a52,#0e1e3e);
+  border:1px solid var(--line2);margin-bottom:12px;
+}
+.avatar{
+  width:70px;height:70px;margin:0 auto 10px;border-radius:50%;
+  display:grid;place-items:center;font-size:32px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  box-shadow:0 0 26px rgba(167,139,250,.5);
+}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.stat{padding:10px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center;}
+.stat .v{font-size:17px;font-weight:900;color:var(--neon);}
+.stat .k{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.badge{padding:10px 6px;border-radius:13px;text-align:center;background:var(--card);border:1px solid var(--line);}
+.badge.locked{opacity:.4;filter:grayscale(1);}
+.badge .b{font-size:24px;}
+.badge .n{font-size:9.5px;font-weight:700;margin-top:4px;line-height:1.25;}
+.badge .d{font-size:9px;color:var(--muted2);margin-top:2px;line-height:1.2;}
+.riwayat{display:flex;flex-direction:column;gap:6px;font-size:12px;}
+.riwayat .it{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:9px;background:#0a1120;border:1px solid var(--line);}
+.riwayat .it .tm{font-size:10px;color:var(--muted2);flex:0 0 auto;}
+
+/* ============================================================
+   MODAL / TOAST
+   ============================================================ */
+#toast{position:fixed;left:0;right:0;bottom:96px;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:80;pointer-events:none;padding:0 14px;}
+.toast{
+  max-width:480px;padding:10px 15px;border-radius:12px;font-size:12.5px;font-weight:700;
+  background:rgba(22,34,60,.98);border:1px solid var(--line2);color:var(--text);
+  box-shadow:0 8px 26px rgba(0,0,0,.55);animation:tin .28s cubic-bezier(.3,1.4,.4,1) both;
+}
+.toast.out{animation:tout .3s ease forwards;}
+.toast.ok{border-color:var(--good);color:#c9ffe9;}
+.toast.no{border-color:var(--bad);color:#ffd5d5;}
+.toast.xp{border-color:var(--neon);color:var(--neon);}
+@keyframes tin{from{opacity:0;transform:translateY(18px) scale(.94);}to{opacity:1;transform:none;}}
+@keyframes tout{to{opacity:0;transform:translateY(-10px);}}
+
+#modal{position:fixed;inset:0;background:rgba(3,6,14,.78);backdrop-filter:blur(4px);z-index:90;display:none;align-items:center;justify-content:center;padding:20px;}
+#modal.on{display:flex;animation:fadeUp .2s ease both;}
+.modal-box{
+  width:100%;max-width:420px;max-height:80vh;overflow-y:auto;
+  background:linear-gradient(180deg,var(--card),var(--bg2));
+  border:1px solid var(--line2);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.7);
+}
+.modal-box h3{margin-bottom:10px;}
+
+.cert-preview{width:100%;border-radius:12px;border:1px solid var(--line2);overflow:hidden;margin-top:10px;}
+
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:95;}
+
+@media (min-width:521px){
+  body{background:#04070e;}
+  #app{box-shadow:0 0 70px rgba(0,0,0,.85);border-left:1px solid var(--line);border-right:1px solid var(--line);}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header id="topbar">
+    <div class="brand">
+      <div class="logo">⬡</div>
+      <div>
+        <div class="t1" id="pageTitle">Beranda</div>
+        <div class="t2">HydroQuest</div>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip lv" id="chipLv">Lv 1</span>
+      <span class="chip xp" id="chipXp">0 XP</span>
+      <span class="chip hp" id="chipHp">❤️ 3</span>
+    </div>
+  </header>
+
+  <main id="views">
+
+    <!-- ============ BERANDA ============ -->
+    <section class="view on" id="v-home">
+      <div class="hero">
+        <div style="font-size:44px;line-height:1">⚗️</div>
+        <h2 style="font-size:19px;margin-top:6px">Petualangan Hidrokarbon</h2>
+        <p class="muted" style="margin-top:6px">Kuasai alkana, alkena, alkuna &amp; haloalkana lewat materi, lab 3D, dan 4 stage permainan.</p>
+        <div style="margin-top:12px">
+          <div class="tiny" style="text-align:left;margin-bottom:4px"><span id="homeLvTxt">Level 1</span> · <span id="homeXpTxt">0 / 100 XP</span></div>
+          <div class="pbar"><i id="homePb" style="width:0%"></i></div>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-bottom:12px">
+        <button class="btn primary" data-goto="materi" style="flex-direction:column;min-height:78px;gap:4px">
+          <span style="font-size:22px">📘</span><span>Materi</span>
+        </button>
+        <button class="btn" data-goto="lab" style="flex-direction:column;min-height:78px;gap:4px">
+          <span style="font-size:22px">🧪</span><span>Lab 3D</span>
+        </button>
+        <button class="btn" data-goto="games" style="flex-direction:column;min-height:78px;gap:4px">
+          <span style="font-size:22px">🎮</span><span>Games</span>
+        </button>
+        <button class="btn" data-goto="profil" style="flex-direction:column;min-height:78px;gap:4px">
+          <span style="font-size:22px">🏆</span><span>Profil</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <h3>📋 Ringkasan Cepat</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line);color:var(--neon)">Kelas</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line);color:var(--neon)">Rumus</th><th style="text-align:left;padding:6px;border-bottom:1px solid var(--line);color:var(--neon)">Ciri</th></tr>
+          <tr><td style="padding:6px;border-bottom:1px solid var(--line)">Alkana</td><td style="padding:6px;border-bottom:1px solid var(--line)">CnH2n+2</td><td style="padding:6px;border-bottom:1px solid var(--line)">Ikatan tunggal</td></tr>
+          <tr><td style="padding:6px;border-bottom:1px solid var(--line)">Alkena</td><td style="padding:6px;border-bottom:1px solid var(--line)">CnH2n</td><td style="padding:6px;border-bottom:1px solid var(--line)">Rangkap dua</td></tr>
+          <tr><td style="padding:6px;border-bottom:1px solid var(--line)">Alkuna</td><td style="padding:6px;border-bottom:1px solid var(--line)">CnH2n−2</td><td style="padding:6px;border-bottom:1px solid var(--line)">Rangkap tiga</td></tr>
+          <tr><td style="padding:6px">Haloalkana</td><td style="padding:6px">R–X</td><td style="padding:6px">Gugus –F/–Cl/–Br/–I</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>🎯 Misi Hari Ini</h3>
+        <div id="homeMisi" class="muted" style="font-size:13px"></div>
+      </div>
+    </section>
+
+    <!-- ============ MATERI ============ -->
+    <section class="view" id="v-materi">
+      <div class="sec-title">📘 Materi Hidrokarbon</div>
+      <p class="tiny" style="margin-bottom:10px">Ketuk setiap kartu untuk membuka. Tandai <b>sudah dibaca</b> untuk mengumpulkan XP.</p>
+      <div id="materiList"></div>
+    </section>
+
+    <!-- ============ LAB 3D ============ -->
+    <section class="view" id="v-lab">
+      <div class="sec-title">🧪 Laboratorium Molekul 3D</div>
+
+      <div class="card" style="padding:10px">
+        <div class="gl-wrap" id="glWrap">
+          <canvas id="gl"></canvas>
+          <div class="gl-loading" id="glLoading">Memuat mesin 3D…<br><span class="tiny">mengambil Three.js dari CDN</span></div>
+          <div class="labels" id="labels"></div>
+          <div class="gl-badges">
+            <button class="pill on" id="btnRotate" aria-label="Putar otomatis">🔄 Auto</button>
+            <button class="pill" id="btnMode" aria-label="Mode tampilan">⚪ Ball &amp; Stick</button>
+            <button class="pill" id="btnLabels" aria-label="Label atom">🏷️ Label</button>
+            <button class="pill" id="btnSnap" aria-label="Simpan gambar">📷</button>
+          </div>
+        </div>
+        <div class="mol-info">
+          <div class="f" id="molRumus">—</div>
+          <div class="n" id="molNama">—</div>
+          <div class="m" id="molMeta"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔧 Bangun Molekul</h3>
+        <div class="row">
+          <label>Jumlah atom C rantai utama</label>
+          <div class="stepper">
+            <button data-n="-1">−</button>
+            <span class="val" id="bN">3</span>
+            <button data-n="1">+</button>
+          </div>
+        </div>
+
+        <div class="row" style="align-items:flex-start;flex-direction:column;gap:6px">
+          <label>Ikatan rangkap pada rantai</label>
+          <div class="chiprow" id="bUnsat">
+            <button class="chipbtn on" data-u="0">Tunggal semua</button>
+            <button class="chipbtn" data-u="2">Rangkap 2</button>
+            <button class="chipbtn" data-u="3">Rangkap 3</button>
+          </div>
+          <div class="chiprow" id="bUnsatPos" style="display:none"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row" style="align-items:flex-start;flex-direction:column;gap:6px">
+          <label>+ Cabang alkil</label>
+          <div class="chiprow" id="bBranchType">
+            <button class="chipbtn" data-bt="methyl">metil</button>
+            <button class="chipbtn" data-bt="ethyl">etil</button>
+            <button class="chipbtn" data-bt="propyl">propil</button>
+          </div>
+          <div class="chiprow" id="bBranchPos"></div>
+        </div>
+
+        <div class="row" style="align-items:flex-start;flex-direction:column;gap:6px">
+          <label>+ Halogen</label>
+          <div class="chiprow" id="bHaloType">
+            <button class="chipbtn" data-ht="F">F</button>
+            <button class="chipbtn" data-ht="Cl">Cl</button>
+            <button class="chipbtn" data-ht="Br">Br</button>
+            <button class="chipbtn" data-ht="I">I</button>
+          </div>
+          <div class="chiprow" id="bHaloPos"></div>
+        </div>
+
+        <div class="sub-list" id="bSubList"></div>
+
+        <div class="grid3" style="margin-top:12px">
+          <button class="btn" id="bReset">♻️ Reset</button>
+          <button class="btn" id="bRandom">🎲 Acak</button>
+          <button class="btn primary" id="bSave">💾 Simpan</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📚 Koleksi Molekul</h3>
+        <p class="tiny">Ketuk untuk menampilkan model 3D-nya.</p>
+        <div class="presets" id="presetList"></div>
+        <div class="divider"></div>
+        <h4 style="font-size:12.5px;color:var(--neon);margin-bottom:6px">Molekul Saya</h4>
+        <div class="presets" id="myMols"></div>
+      </div>
+    </section>
+
+    <!-- ============ GAMES ============ -->
+    <section class="view" id="v-games">
+      <div id="gamesHome">
+        <div class="sec-title">🎮 Arena Permainan</div>
+        <p class="tiny" style="margin-bottom:12px">Selesaikan stage berurutan untuk membuka stage berikutnya. Setiap kesalahan mengurangi 1 nyawa ❤️.</p>
+        <div id="stageList"></div>
+      </div>
+      <div id="gamePlay" style="display:none"></div>
+    </section>
+
+    <!-- ============ PROFIL ============ -->
+    <section class="view" id="v-profil">
+      <div class="sec-title">🏆 Profil &amp; Pencapaian</div>
+
+      <div class="hero">
+        <div class="avatar">🧑‍🔬</div>
+        <input type="text" id="namaInput" placeholder="Tulis namamu di sini…" style="text-align:center;font-weight:700">
+        <div class="tiny" style="margin-top:6px" id="profilSub">Kelas XII · SMA Santo Paulus Pontianak</div>
+        <div style="margin-top:12px">
+          <div class="tiny" style="text-align:left;margin-bottom:4px"><span id="pLvTxt">Level 1</span> · <span id="pXpTxt">0 / 100 XP</span></div>
+          <div class="pbar"><i id="pPb" style="width:0%"></i></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📊 Statistik</h3>
+        <div class="stats" id="statsBox"></div>
+      </div>
+
+      <div class="card">
+        <h3>🎖️ Lencana</h3>
+        <div class="badges" id="badgeBox"></div>
+      </div>
+
+      <div class="card">
+        <h3>📜 Sertifikat</h3>
+        <p class="tiny" id="certInfo">Selesaikan minimal Stage 1 &amp; Stage 2 untuk membuka sertifikat.</p>
+        <button class="btn primary block" id="btnCert" style="margin-top:8px">🎓 Buat Sertifikat</button>
+        <div id="certArea"></div>
+      </div>
+
+      <div class="card">
+        <h3>💾 Data &amp; Cadangan</h3>
+        <p class="tiny">Progres tersimpan otomatis di perangkatmu. Unduh berkala untuk cadangan.</p>
+        <div class="grid2" style="margin-top:10px">
+          <button class="btn" id="btnExport">⬇️ Unduh .json</button>
+          <button class="btn" id="btnImport">⬆️ Impor .json</button>
+        </div>
+        <input type="file" id="fileImport" accept=".json,application/json" style="display:none">
+        <button class="btn warn block" id="btnReset" style="margin-top:8px">🗑️ Reset Progres</button>
+        <div class="tiny" style="margin-top:8px" id="storeInfo"></div>
+      </div>
+
+      <div class="card">
+        <h3>🕘 Riwayat Aktivitas</h3>
+        <div class="riwayat" id="riwayatBox"></div>
+      </div>
+
+      <div class="card">
+        <h3>⚙️ Pengaturan</h3>
+        <div class="row"><label>Efek suara</label><button class="chipbtn" id="setSuara">Aktif</button></div>
+        <div class="row"><label>Auto-rotate molekul</label><button class="chipbtn" id="setRotate">Aktif</button></div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav id="tabbar">
+    <button class="tab on" data-tab="home"><i>🏠</i>Beranda</button>
+    <button class="tab" data-tab="materi"><i>📘</i>Materi</button>
+    <button class="tab" data-tab="lab"><i>🧪</i>Lab 3D</button>
+    <button class="tab" data-tab="games"><i>🎮</i>Games</button>
+    <button class="tab" data-tab="profil"><i>🏆</i>Profil</button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+<div id="modal"><div class="modal-box" id="modalBox"></div></div>
+<canvas id="confetti"></canvas>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+/* ============================================================
+   1. KONFIGURASI
+   ============================================================ */
+const CFG = {
+  APP: 'HydroQuest',
+  KEY: 'hydroquest_v1',
+  VERSION: 1,
+  GURU: 'Suliono, S.Pd.',
+  SEKOLAH: 'SMA Santo Paulus Pontianak',
+};
+
+const ELEM = {
+  C:  { r:0.40, color:0x4b5a75, name:'Karbon'   },
+  H:  { r:0.22, color:0xeef4ff, name:'Hidrogen' },
+  F:  { r:0.34, color:0x9ef01a, name:'Fluor'    },
+  Cl: { r:0.44, color:0x2fb344, name:'Klor'     },
+  Br: { r:0.52, color:0xa0522d, name:'Brom'     },
+  I:  { r:0.60, color:0x8b5cf6, name:'Iodium'   },
+};
+
+/* ============================================================
+   2. UTIL
+   ============================================================ */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+function toast(msg, type='') {
+  const box = $('#toast');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(), 320); }, 2200);
+  while (box.children.length > 3) box.firstChild.remove();
+}
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function seedFrom(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+
+function vibrate(ms){ if (navigator.vibrate) try{navigator.vibrate(ms);}catch(e){} }
+
+let audioCtx = null;
+function beep(freq=440, dur=0.09, type='sine', vol=0.06){
+  if (!Store.state?.pengaturan?.suara) return;
+  try{
+    if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + dur);
+  }catch(e){}
+}
+const sfx = {
+  ok:   () => { beep(660,0.08,'sine'); setTimeout(()=>beep(990,0.11,'sine'),80); },
+  no:   () => { beep(200,0.16,'sawtooth',0.05); },
+  tap:  () => beep(520,0.04,'sine',0.035),
+  win:  () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.16,'sine'),i*110)); },
+  lvl:  () => { [392,523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'triangle'),i*90)); },
+};
+
+/* ============================================================
+   3. STORE
+   ============================================================ */
+const defaultState = () => ({
+  version: CFG.VERSION,
+  siswa: { nama:'', kelas:'XII', sekolah: CFG.SEKOLAH },
+  progres: { xp:0, level:1, nyawa:3, materiDibaca:[], molekulDisimpan:[] },
+  games: { stage1:null, stage2:null, stage3:null, stage4:null },
+  badges: [],
+  statistik: { totalSoal:0, totalBenar:0, streakTerpanjang:0, totalWaktuBelajar:0 },
+  sertifikat: { nomor:'', tanggal:'' },
+  riwayatAktivitas: [],
+  pengaturan: { suara:true, autoRotate:true, tema:'gelap' },
+  _savedAt: null,
+});
+
+const Store = {
+  state: defaultState(),
+  _t: null,
+  _broken: false,
+
+  load(){
+    try{
+      const raw = localStorage.getItem(CFG.KEY);
+      if (!raw) return;
+      const obj = JSON.parse(raw);
+      if (!obj || typeof obj !== 'object') throw new Error('bad');
+      const def = defaultState();
+      this.state = {
+        ...def, ...obj,
+        siswa: { ...def.siswa, ...(obj.siswa||{}) },
+        progres: { ...def.progres, ...(obj.progres||{}) },
+        games: { ...def.games, ...(obj.games||{}) },
+        statistik: { ...def.statistik, ...(obj.statistik||{}) },
+        pengaturan: { ...def.pengaturan, ...(obj.pengaturan||{}) },
+        sertifikat: { ...def.sertifikat, ...(obj.sertifikat||{}) },
+        badges: Array.isArray(obj.badges) ? obj.badges : [],
+        riwayatAktivitas: Array.isArray(obj.riwayatAktivitas) ? obj.riwayatAktivitas : [],
+      };
+    }catch(e){
+      console.warn('Data rusak, memuat default', e);
+      this.state = defaultState();
+      this._broken = true;
+      setTimeout(()=>toast('Data lama rusak — dimuat ulang dari awal', 'no'), 500);
+    }
+  },
+
+  save(){
+    clearTimeout(this._t);
+    this._t = setTimeout(()=>this.saveNow(), 300);
+  },
+
+  saveNow(){
+    try{
+      this.state._savedAt = new Date().toISOString();
+      localStorage.setItem(CFG.KEY, JSON.stringify(this.state));
+      if (typeof updateStoreInfo === 'function') updateStoreInfo();
+    }catch(e){
+      console.warn(e);
+      toast('⚠️ Tidak bisa menyimpan (mode privat / penuh)', 'no');
+    }
+  },
+
+  reset(){
+    this.state = defaultState();
+    try{ localStorage.removeItem(CFG.KEY); }catch(e){}
+    this.saveNow();
+  },
+
+  export(){
+    const s = this.state;
+    const nama = (s.siswa.nama || 'siswa').replace(/[^a-z0-9]/gi,'-').toLowerCase();
+    const d = new Date();
+    const tgl = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    const blob = new Blob([JSON.stringify(this.state, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `hydroquest-data-${nama}-${tgl}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    toast('Data berhasil diunduh ✅', 'ok');
+    logActivity('Mengunduh cadangan data');
+  },
+
+  async import(file){
+    const txt = await file.text();
+    let obj;
+    try{ obj = JSON.parse(txt); }catch(e){ throw new Error('File bukan JSON yang valid'); }
+    if (!obj || typeof obj !== 'object' || !('progres' in obj)) throw new Error('Struktur data tidak dikenali');
+    const def = defaultState();
+    this.state = { ...def, ...obj,
+      siswa:{...def.siswa,...(obj.siswa||{})},
+      progres:{...def.progres,...(obj.progres||{})},
+      games:{...def.games,...(obj.games||{})},
+      statistik:{...def.statistik,...(obj.statistik||{})},
+      pengaturan:{...def.pengaturan,...(obj.pengaturan||{})},
+      sertifikat:{...def.sertifikat,...(obj.sertifikat||{})},
+    };
+    this.saveNow();
+  },
+};
+
+/* --- XP & Level --- */
+function xpForLevel(lv){ return 100 * lv * (lv+1) / 2; }
+function levelFromXp(xp){ let lv=1; while (xp >= xpForLevel(lv)) lv++; return lv; }
+
+function addXP(n, silent=false){
+  const s = Store.state;
+  const before = levelFromXp(s.progres.xp);
+  s.progres.xp += n;
+  s.progres.level = levelFromXp(s.progres.xp);
+  Store.save();
+  if (!silent && n > 0) toast(`+${n} XP`, 'xp');
+  if (s.progres.level > before){
+    sfx.lvl();
+    confettiBurst();
+    toast(`🎉 Naik ke Level ${s.progres.level}!`, 'ok');
+    logActivity(`Naik ke Level ${s.progres.level}`);
+  }
+  syncHeader();
+  renderProfil();
+  renderHome();
+  return s.progres.level - before;
+}
+
+function logActivity(teks){
+  const s = Store.state;
+  s.riwayatAktivitas.unshift({ waktu: new Date().toISOString(), teks });
+  if (s.riwayatAktivitas.length > 10) s.riwayatAktivitas.length = 10;
+  Store.save();
+}
+
+/* --- Badge --- */
+const BADGES = [
+  { id:'pemula',   ikon:'🌱', nama:'Pemula',        desc:'Mulai belajar',        cek:s=>true },
+  { id:'kartu',    ikon:'🃏', nama:'Kartu Kilat',   desc:'Stage 1 selesai',      cek:s=>!!s.games.stage1?.selesai },
+  { id:'penama',   ikon:'📝', nama:'Ahli Nama',     desc:'Stage 2 selesai',      cek:s=>!!s.games.stage2?.selesai },
+  { id:'arsitek',  ikon:'🏗️', nama:'Arsitek',       desc:'Stage 3 selesai',      cek:s=>!!s.games.stage3?.selesai },
+  { id:'isomer',   ikon:'🔍', nama:'Detektif',      desc:'Stage 4 selesai',      cek:s=>!!s.games.stage4?.selesai },
+  { id:'sempurna', ikon:'💯', nama:'Sempurna!',     desc:'Skor 100% 1 stage',    cek:s=>['stage1','stage2','stage3','stage4'].some(k=>s.games[k]?.skor===100) },
+  { id:'utuh',     ikon:'🛡️', nama:'Tanpa Cela',    desc:'Tuntas tanpa kehilangan nyawa', cek:s=>['stage1','stage2','stage3','stage4'].some(k=>s.games[k]?.nyawaUtuh) },
+  { id:'streak',   ikon:'🔥', nama:'Streak 10',     desc:'10 benar berturut',    cek:s=>s.statistik.streakTerpanjang>=10 },
+  { id:'kolektor', ikon:'🧬', nama:'Kolektor',      desc:'Simpan 5 molekul',     cek:s=>s.progres.molekulDisimpan.length>=5 },
+  { id:'cendekia', ikon:'🎓', nama:'Cendekia',      desc:'Baca semua materi',    cek:s=>s.progres.materiDibaca.length>=MATERI.length },
+  { id:'lv5',      ikon:'⚗️', nama:'Kimiawan',      desc:'Capai Level 5',        cek:s=>s.progres.level>=5 },
+];
+
+function cekBadge(){
+  const s = Store.state;
+  let baru = [];
+  for (const b of BADGES){
+    if (!s.badges.includes(b.id) && b.cek(s)){
+      s.badges.push(b.id);
+      baru.push(b);
+    }
+  }
+  if (baru.length){
+    Store.save();
+    baru.forEach((b,i)=>setTimeout(()=>{
+      toast(`🎖️ Lencana baru: ${b.nama}`, 'ok');
+      sfx.win();
+    }, i*900));
+  }
+}
+
+/* ============================================================
+   4. CHEM ENGINE
+   ============================================================ */
+function buildStructure(spec){
+  const atoms = [], bonds = [];
+  let idc = 0;
+  const nid = (el, tag) => { const id='a'+(idc++); atoms.push({id, el, tag}); return id; };
+
+  const chain = [];
+  for (let i=0;i<spec.n;i++) chain.push(nid('C','chain'));
+  for (let i=0;i<spec.n-1;i++){
+    let order = 1;
+    const u = (spec.unsat||[]).find(x => x.pos === i+1);
+    if (u) order = u.order;
+    bonds.push({ a: chain[i], b: chain[i+1], order });
+  }
+
+  for (const s of (spec.subs||[])){
+    const parent = chain[s.pos-1];
+    if (!parent) continue;
+    if (['F','Cl','Br','I'].includes(s.type)){
+      const x = nid(s.type,'halo');
+      bonds.push({ a: parent, b: x, order:1 });
+    } else {
+      const len = { methyl:1, ethyl:2, propyl:3 }[s.type] || 1;
+      let prev = parent;
+      for (let k=0;k<len;k++){
+        const c = nid('C','branch');
+        bonds.push({ a: prev, b: c, order:1 });
+        prev = c;
+      }
+    }
+  }
+
+  const struct = { atoms, bonds, spec };
+  addHydrogens(struct);
+  computeLayout(struct);
+  return struct;
+}
+
+function addHydrogens(struct){
+  const VAL = { C:4, H:1, F:1, Cl:1, Br:1, I:1 };
+  const used = {};
+  for (const b of struct.bonds){
+    used[b.a] = (used[b.a]||0) + b.order;
+    used[b.b] = (used[b.b]||0) + b.order;
+  }
+  let idc = 5000;
+  const add = [];
+  for (const at of struct.atoms){
+    if (at.el === 'H') continue;
+    const need = Math.max(0, (VAL[at.el]||0) - (used[at.id]||0));
+    for (let i=0;i<need;i++){
+      const h = { id:'h'+(idc++), el:'H', tag:'h' };
+      add.push(h);
+      struct.bonds.push({ a: at.id, b: h.id, order:1 });
+    }
+  }
+  struct.atoms.push(...add);
+}
+
+function formulaOf(struct){
+  const cnt = {};
+  for (const a of struct.atoms) cnt[a.el] = (cnt[a.el]||0)+1;
+  const order = ['C','H','F','Cl','Br','I'];
+  let out = '';
+  for (const el of order){
+    if (!cnt[el]) continue;
+    out += el + (cnt[el] > 1 ? cnt[el] : '');
+    delete cnt[el];
+  }
+  for (const el of Object.keys(cnt)) out += el + (cnt[el]>1?cnt[el]:'');
+  return out;
+}
+
+function degreesOfUnsaturation(struct){
+  const c = struct.atoms.filter(a=>a.el==='C').length;
+  const h = struct.atoms.filter(a=>a.el==='H').length;
+  const x = struct.atoms.filter(a=>['F','Cl','Br','I'].includes(a.el)).length;
+  return Math.max(0, (2*c + 2 - h - x) / 2);
+}
+
+function classOf(struct){
+  const hasTriple = struct.bonds.some(b => b.order === 3 && isCC(struct,b));
+  const hasDouble = struct.bonds.some(b => b.order === 2 && isCC(struct,b));
+  const hasHalo   = struct.atoms.some(a => ['F','Cl','Br','I'].includes(a.el));
+  if (hasTriple) return 'Alkuna';
+  if (hasDouble) return 'Alkena';
+  if (hasHalo)   return 'Haloalkana';
+  return 'Alkana';
+}
+function isCC(struct, b){
+  const A = struct.atoms.find(x=>x.id===b.a), B = struct.atoms.find(x=>x.id===b.b);
+  return A && B && A.el==='C' && B.el==='C';
+}
+
+/* --- TATA NAMA IUPAC --- */
+const CHAIN_PREFIX = ['met','et','prop','but','pent','heks','hept','okt','non','dek'];
+
+function ccAdjacency(struct){
+  const adj = {};
+  struct.atoms.filter(a=>a.el==='C').forEach(a => adj[a.id] = []);
+  for (const b of struct.bonds){
+    const A = struct.atoms.find(x=>x.id===b.a), B = struct.atoms.find(x=>x.id===b.b);
+    if (!A || !B) continue;
+    if (A.el==='C' && B.el==='C'){
+      adj[b.a].push({to:b.b, order:b.order});
+      adj[b.b].push({to:b.a, order:b.order});
+    }
+  }
+  return adj;
+}
+
+function findBondOrder(struct, a, b){
+  const bb = struct.bonds.find(x => (x.a===a&&x.b===b)||(x.a===b&&x.b===a));
+  return bb ? bb.order : 1;
+}
+
+function allCarbonPaths(adj){
+  const nodes = Object.keys(adj);
+  const out = [], seen = new Set();
+  for (const s of nodes){
+    const par = {}, dist = {[s]:0}, q = [s];
+    while (q.length){
+      const u = q.shift();
+      for (const nb of adj[u]){
+        if (!(nb.to in dist)){ dist[nb.to]=dist[u]+1; par[nb.to]=u; q.push(nb.to); }
+      }
+    }
+    for (const t of nodes){
+      if (t===s) continue;
+      const key = s < t ? s+'|'+t : t+'|'+s;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const path=[]; let c=t;
+      while (c!==s){ path.unshift(c); c=par[c]; }
+      path.unshift(s);
+      out.push(path);
+    }
+  }
+  return out;
+}
+
+function locantsFor(struct, path){
+  const idx = {}; path.forEach((id,i)=>idx[id]=i+1);
+  const mult = [], subs = [];
+  for (let i=0;i<path.length-1;i++){
+    const o = findBondOrder(struct, path[i], path[i+1]);
+    if (o > 1) mult.push(i+1);
+  }
+  for (const id of path){
+    for (const b of struct.bonds){
+      const other = b.a===id ? b.b : (b.b===id ? b.a : null);
+      if (!other || idx[other]) continue;
+      const at = struct.atoms.find(x=>x.id===other);
+      if (!at) continue;
+      if (at.el === 'H') continue;
+      subs.push(idx[id]);
+    }
+  }
+  subs.sort((a,b)=>a-b);
+  return { mult, subs };
+}
+
+function cmpLocant(a, b){
+  const A = [...a.mult, ...a.subs], B = [...b.mult, ...b.subs];
+  for (let i=0;i<Math.max(A.length,B.length);i++){
+    const x = A[i] ?? 999, y = B[i] ?? 999;
+    if (x !== y) return x - y;
+  }
+  return 0;
+}
+
+function branchName(struct, startId, parentId, adj){
+  function walk(u, from, depth, visited){
+    let best = depth;
+    let arr = [u];
+    for (const nb of adj[u] || []){
+      if (nb.to === from || visited.has(nb.to)) continue;
+      visited.add(nb.to);
+      const sub = walk(nb.to, u, depth+1, visited);
+      if (sub.len > best){ best = sub.len; arr = [u, ...sub.arr]; }
+      visited.delete(nb.to);
+    }
+    return { len: best, arr };
+  }
+  const res = walk(startId, parentId, 1, new Set([startId, parentId]));
+  const len = res.len;
+  const base = len <= 10 ? CHAIN_PREFIX[len-1] + 'il' : 'alkil';
+  return { base, len };
+}
+
+function iupacName(struct){
+  const adj = ccAdjacency(struct);
+  const cCount = Object.keys(adj).length;
+  if (cCount === 0) return '—';
+  const paths = allCarbonPaths(adj);
+  if (!paths.length) return '—';
+
+  let cands = paths.map(p => {
+    let mult = 0;
+    for (let i=0;i<p.length-1;i++) if (findBondOrder(struct, p[i], p[i+1]) > 1) mult++;
+    return { path: p, mult, len: p.length };
+  });
+
+  const maxMult = Math.max(...cands.map(c=>c.mult));
+  cands = cands.filter(c => c.mult === maxMult);
+  const maxLen = Math.max(...cands.map(c=>c.len));
+  cands = cands.filter(c => c.len === maxLen);
+
+  let best = null;
+  for (const c of cands){
+    const fwd  = locantsFor(struct, c.path);
+    const rev  = locantsFor(struct, [...c.path].reverse());
+    const pick = cmpLocant(fwd, rev) <= 0 ? { loc:fwd, path:c.path } : { loc:rev, path:[...c.path].reverse() };
+    if (!best || cmpLocant(pick.loc, best.loc) < 0) best = { ...pick, len:c.len };
+  }
+
+  const path = best.path, loc = best.loc;
+  const idx = {}; path.forEach((id,i)=>idx[id]=i+1);
+
+  let multOrder = 1, multPos = null;
+  for (let i=0;i<path.length-1;i++){
+    const o = findBondOrder(struct, path[i], path[i+1]);
+    if (o > 1){ multOrder = o; multPos = i+1; break; }
+  }
+
+  const suffix = multOrder === 3 ? 'una' : multOrder === 2 ? 'ena' : 'ana';
+  const base = CHAIN_PREFIX[Math.min(path.length,10)-1];
+  const parent = base + suffix;
+
+  // kumpulkan substituen (hanya atom non-H di luar rantai utama)
+  const subs = [];
+  for (const id of path){
+    for (const b of struct.bonds){
+      const other = b.a===id ? b.b : (b.b===id ? b.a : null);
+      if (!other || idx[other]) continue;
+      const at = struct.atoms.find(x=>x.id===other);
+      if (!at || at.el === 'H') continue;
+      const pos = idx[id];
+      if (['F','Cl','Br','I'].includes(at.el)){
+        const nm = { F:'fluoro', Cl:'kloro', Br:'bromo', I:'iodo' }[at.el];
+        subs.push({ pos, base:nm, sort:nm, jenis:'halo' });
+      } else if (at.el === 'C'){
+        const bn = branchName(struct, other, id, adj);
+        subs.push({ pos, base: bn.base, sort: bn.base, jenis:'alkil' });
+      }
+    }
+  }
+
+  // urut abjad (base), lalu posisi
+  subs.sort((a,b) => a.sort.localeCompare(b.sort) || a.pos - b.pos);
+
+  // gabung posisi dengan multiplier berdasarkan nama yang sama
+  const grouped = [];
+  for (const s of subs){
+    const last = grouped[grouped.length-1];
+    if (last && last.base === s.base) last.positions.push(s.pos);
+    else grouped.push({ base:s.base, sort:s.sort, positions:[s.pos] });
+  }
+
+  /* ============================================================
+     AWALAN PENGALI IUPAC
+     1 cabang  → tanpa awalan     contoh: 2-metilpropana
+     2 cabang  → di-              contoh: 2,2-dimetilpropana
+     3 cabang  → tri-             contoh: 2,2,3-trimetilbutana
+     4 cabang  → tetra-
+     5 cabang  → penta-
+     PENTING: posisi yang sama TIDAK di-dedupe (mis. "2,2-"),
+     karena dua cabang sejenis di karbon yang sama tetap ditulis
+     berulang sesuai aturan IUPAC.
+     ============================================================ */
+  const MULT = ['', 'di', 'tri', 'tetra', 'penta'];
+  const subStr = grouped.map(g => {
+    // urutkan posisi TANPA menghapus duplikat
+    const pos = g.positions.slice().sort((a, b) => a - b);
+    const n = pos.length;                                       // jumlah cabang sejenis
+    const m = n >= 1 ? (MULT[Math.min(n, 5) - 1] || '') : '';   // indeks 0 = tanpa awalan
+    return `${pos.join(',')}-${m}${g.base}`;
+  }).join('-');
+
+  let nama = parent;
+  if (multOrder > 1 && multPos) nama = `${multPos}-${parent}`;
+  if (subStr) nama = subStr + '-' + nama;
+
+  return nama.charAt(0).toUpperCase() + nama.slice(1);
+}
+
+/* --- Layout 3D --- */
+function computeLayout(struct){
+  const N = struct.atoms.length;
+  const idx = {}; struct.atoms.forEach((a,i)=>idx[a.id]=i);
+  const adj = {}; struct.atoms.forEach(a => adj[a.id]=[]);
+  struct.bonds.forEach(b => { adj[b.a].push(b.b); adj[b.b].push(b.a); });
+
+  const rnd = mulberry32(seedFrom(formulaOf(struct) + struct.atoms.length));
+  const pos = new Float32Array(N*3);
+  const placed = new Set();
+  const chainIds = struct.atoms.filter(a=>a.tag==='chain').map(a=>a.id);
+
+  chainIds.forEach((id, i) => {
+    const p = idx[id];
+    pos[p*3]   = (i - (chainIds.length-1)/2) * 1.24;
+    pos[p*3+1] = (i % 2 ? 0.46 : -0.46);
+    pos[p*3+2] = 0;
+    placed.add(id);
+  });
+
+  const q = [...chainIds];
+  while (q.length){
+    const u = q.shift();
+    const pu = idx[u];
+    for (const v of adj[u]){
+      if (placed.has(v)) continue;
+      placed.add(v);
+      const pv = idx[v];
+      const el = struct.atoms[pv].el;
+      const d = (el === 'H') ? 1.05 : 1.5;
+      const ang = rnd() * Math.PI * 2;
+      const spread = 0.55 + rnd()*0.5;
+      let ux = Math.cos(ang)*spread;
+      let uy = Math.sin(ang)*spread;
+      let uz = (rnd()>0.5?1:-1) * (0.7 + rnd()*0.7);
+      const L = Math.hypot(ux,uy,uz)||1;
+      pos[pv*3]   = pos[pu*3]   + ux/L*d;
+      pos[pv*3+1] = pos[pu*3+1] + uy/L*d;
+      pos[pv*3+2] = pos[pu*3+2] + uz/L*d;
+      q.push(v);
+    }
+  }
+
+  const bondList = struct.bonds.map(b => ({ i:idx[b.a], j:idx[b.b], order:b.order }));
+  const ITER = 260;
+  for (let it=0; it<ITER; it++){
+    const f = new Float32Array(N*3);
+    for (let i=0;i<N;i++){
+      for (let j=i+1;j<N;j++){
+        let dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
+        let d2 = dx*dx+dy*dy+dz*dz + 0.05;
+        const d = Math.sqrt(d2);
+        const rep = 1.15 / d2;
+        const fx = dx/d*rep, fy = dy/d*rep, fz = dz/d*rep;
+        f[i*3]+=fx; f[i*3+1]+=fy; f[i*3+2]+=fz;
+        f[j*3]-=fx; f[j*3+1]-=fy; f[j*3+2]-=fz;
+      }
+    }
+    for (const b of bondList){
+      const ea = struct.atoms[b.i].el, eb = struct.atoms[b.j].el;
+      const target = (ea==='H'||eb==='H') ? 1.05 : (b.order>1 ? 1.32 : 1.5);
+      let dx = pos[b.j*3]-pos[b.i*3], dy = pos[b.j*3+1]-pos[b.i*3+1], dz = pos[b.j*3+2]-pos[b.i*3+2];
+      const d = Math.hypot(dx,dy,dz) + 1e-6;
+      const s = (d - target) * 0.34;
+      const ux=dx/d, uy=dy/d, uz=dz/d;
+      f[b.i*3]+=ux*s; f[b.i*3+1]+=uy*s; f[b.i*3+2]+=uz*s;
+      f[b.j*3]-=ux*s; f[b.j*3+1]-=uy*s; f[b.j*3+2]-=uz*s;
+    }
+    const lr = 0.14;
+    for (let i=0;i<N;i++){
+      pos[i*3]   += clamp(f[i*3]*lr,   -0.35, 0.35);
+      pos[i*3+1] += clamp(f[i*3+1]*lr, -0.35, 0.35);
+      pos[i*3+2] += clamp(f[i*3+2]*lr, -0.35, 0.35);
+    }
+  }
+
+  let cx=0,cy=0,cz=0;
+  for (let i=0;i<N;i++){ cx+=pos[i*3]; cy+=pos[i*3+1]; cz+=pos[i*3+2]; }
+  cx/=N; cy/=N; cz/=N;
+  for (let i=0;i<N;i++){ pos[i*3]-=cx; pos[i*3+1]-=cy; pos[i*3+2]-=cz; }
+
+  struct.pos = pos;
+  struct.idx = idx;
+  return struct;
+}
+
+/* --- Kanonikalisasi untuk Stage 3 --- */
+function canonicalForm(struct){
+  const adj = {};
+  struct.atoms.filter(a=>a.el!=='H').forEach(a => adj[a.id] = []);
+  const el = {}; struct.atoms.forEach(a => el[a.id]=a.el);
+  struct.bonds.forEach(b => {
+    const A = el[b.a], B = el[b.b];
+    if (A==='H'||B==='H') return;
+    adj[b.a].push({to:b.b, order:b.order});
+    adj[b.b].push({to:b.a, order:b.order});
+  });
+  const nodes = Object.keys(adj);
+  if (!nodes.length) return '';
+
+  const deg = {}; nodes.forEach(n => deg[n]=adj[n].length);
+  let alive = new Set(nodes);
+  let layer = nodes.filter(n => deg[n] <= 1);
+  let remaining = nodes.length;
+  let centers = nodes.slice();
+  while (remaining > 2 && layer.length){
+    remaining -= layer.length;
+    const next = [];
+    const nxt = new Set();
+    for (const u of layer){
+      alive.delete(u);
+      for (const nb of adj[u]){
+        if (!alive.has(nb.to)) continue;
+        deg[nb.to]--;
+        if (deg[nb.to] <= 1 && !nxt.has(nb.to)){ nxt.add(nb.to); next.push(nb.to); }
+      }
+    }
+    layer = next;
+    if (next.length) centers = next.slice();
+  }
+  centers = [...alive];
+
+  function encode(root){
+    const seen = new Set([root]);
+    function rec(u, from){
+      const kids = [];
+      for (const nb of adj[u]){
+        if (nb.to === from || seen.has(nb.to)) continue;
+        seen.add(nb.to);
+        kids.push(nb.order + rec(nb.to, u));
+        seen.delete(nb.to);
+      }
+      kids.sort();
+      return el[u] + '[' + kids.join(',') + ']';
+    }
+    return rec(root, null);
+  }
+  const forms = centers.map(c => encode(c)).sort();
+  return forms[0];
+}
+
+/* ============================================================
+   5. PRESET MOLEKUL
+   ============================================================ */
+const PRESETS = [
+  { nama:'Metana',         spec:{n:1,unsat:[],subs:[]} },
+  { nama:'Etana',          spec:{n:2,unsat:[],subs:[]} },
+  { nama:'Propana',        spec:{n:3,unsat:[],subs:[]} },
+  { nama:'Butana',         spec:{n:4,unsat:[],subs:[]} },
+  { nama:'2-Metilpropana', spec:{n:3,unsat:[],subs:[{pos:2,type:'methyl'}]} },
+  { nama:'2-Metilbutana',  spec:{n:4,unsat:[],subs:[{pos:2,type:'methyl'}]} },
+  { nama:'2,2-Dimetilpropana', spec:{n:3,unsat:[],subs:[{pos:2,type:'methyl'},{pos:2,type:'methyl'}]} },
+  { nama:'Etena',          spec:{n:2,unsat:[{pos:1,order:2}],subs:[]} },
+  { nama:'Propena',        spec:{n:3,unsat:[{pos:1,order:2}],subs:[]} },
+  { nama:'2-Butena',       spec:{n:4,unsat:[{pos:2,order:2}],subs:[]} },
+  { nama:'Etuna',          spec:{n:2,unsat:[{pos:1,order:3}],subs:[]} },
+  { nama:'Propuna',        spec:{n:3,unsat:[{pos:1,order:3}],subs:[]} },
+  { nama:'Klorometana',    spec:{n:1,unsat:[],subs:[{pos:1,type:'Cl'}]} },
+  { nama:'Bromoetana',     spec:{n:2,unsat:[],subs:[{pos:1,type:'Br'}]} },
+  { nama:'1,2-Dikloroetana', spec:{n:2,unsat:[],subs:[{pos:1,type:'Cl'},{pos:2,type:'Cl'}]} },
+  { nama:'Triklorometana (Kloroform)', spec:{n:1,unsat:[],subs:[{pos:1,type:'Cl'},{pos:1,type:'Cl'},{pos:1,type:'Cl'}]} },
+  { nama:'3-Metilheksana', spec:{n:6,unsat:[],subs:[{pos:3,type:'methyl'}]} },
+  { nama:'1-Bromo-2-kloropropana', spec:{n:3,unsat:[],subs:[{pos:1,type:'Br'},{pos:2,type:'Cl'}]} },
+];
+
+/* ============================================================
+   6. MATERI
+   ============================================================ */
+const MATERI = [
+  {
+    id:'pengantar', ikon:'🌍', judul:'Pengantar Hidrokarbon',
+    isi:`
+      <p><b>Hidrokarbon</b> adalah senyawa organik yang hanya tersusun dari atom <span class="tag">C</span> karbon dan <span class="tag">H</span> hidrogen.</p>
+      <h4>Kekhasan Atom Karbon</h4>
+      <ul>
+        <li>Atom C memiliki <b>4 elektron valensi</b> → dapat membentuk 4 ikatan kovalen.</li>
+        <li>Dapat membentuk <b>rantai panjang</b> (katenasi) — lurus, bercabang, atau melingkar.</li>
+        <li>Dapat membentuk <b>ikatan tunggal, rangkap dua, atau rangkap tiga</b>.</li>
+        <li>Ukuran atom C kecil → ikatan C–C sangat kuat.</li>
+      </ul>
+      <h4>Penggolongan</h4>
+      <table>
+        <tr><th>Golongan</th><th>Rumus Umum</th><th>Ikatan Khas</th></tr>
+        <tr><td>Alkana</td><td>C<sub>n</sub>H<sub>2n+2</sub></td><td>Tunggal</td></tr>
+        <tr><td>Alkena</td><td>C<sub>n</sub>H<sub>2n</sub></td><td>Rangkap dua</td></tr>
+        <tr><td>Alkuna</td><td>C<sub>n</sub>H<sub>2n−2</sub></td><td>Rangkap tiga</td></tr>
+        <tr><td>Haloalkana</td><td>R–X</td><td>Ikatan C–X</td></tr>
+      </table>
+      <h4>Isomer</h4>
+      <p><b>Isomer</b> = senyawa dengan rumus molekul sama tetapi struktur berbeda. Contoh: C<sub>4</sub>H<sub>10</sub> punya 2 isomer (n-butana &amp; 2-metilpropana).</p>
+    `,
+    contoh:[
+      { q:'Mengapa atom karbon bisa membentuk begitu banyak senyawa?', a:'Karena karbon memiliki 4 elektron valensi sehingga dapat membentuk 4 ikatan kovalen, dan mampu membentuk rantai (katenasi) yang panjang maupun bercabang.' },
+    ],
+  },
+  {
+    id:'alkana', ikon:'🟦', judul:'Alkana (CₙH₂ₙ₊₂)',
+    isi:`
+      <p><b>Alkana</b> = hidrokarbon jenuh, semua ikatan antar karbon <b>tunggal</b> (C–C). Paling sederhana: metana (CH₄).</p>
+      <h4>Deret Homolog C1–C10</h4>
+      <table>
+        <tr><th>n</th><th>Nama</th><th>Rumus</th><th>Titik didih</th></tr>
+        <tr><td>1</td><td>Metana</td><td>CH₄</td><td>−162 °C</td></tr>
+        <tr><td>2</td><td>Etana</td><td>C₂H₆</td><td>−89 °C</td></tr>
+        <tr><td>3</td><td>Propana</td><td>C₃H₈</td><td>−42 °C</td></tr>
+        <tr><td>4</td><td>Butana</td><td>C₄H₁₀</td><td>−0,5 °C</td></tr>
+        <tr><td>5</td><td>Pentana</td><td>C₅H₁₂</td><td>36 °C</td></tr>
+        <tr><td>6</td><td>Heksana</td><td>C₆H₁₄</td><td>69 °C</td></tr>
+        <tr><td>7</td><td>Heptana</td><td>C₇H₁₆</td><td>98 °C</td></tr>
+        <tr><td>8</td><td>Oktana</td><td>C₈H₁₈</td><td>126 °C</td></tr>
+        <tr><td>9</td><td>Nonana</td><td>C₉H₂₀</td><td>151 °C</td></tr>
+        <tr><td>10</td><td>Dekana</td><td>C₁₀H₂₂</td><td>174 °C</td></tr>
+      </table>
+      <h4>Tata Nama IUPAC — 5 Langkah</h4>
+      <ol>
+        <li>Cari <b>rantai terpanjang</b> atom karbon → jadi nama induk.</li>
+        <li><b>Nomori</b> rantai dari ujung yang memberi nomor cabang terkecil.</li>
+        <li>Beri nama <b>cabang (alkil)</b> + nomor posisinya.</li>
+        <li>Cabang sejenis digabung dengan awalan <b>di-, tri-, tetra-</b>.</li>
+        <li>Cabang berbeda diurutkan <b>menurut abjad</b> (etil sebelum metil).</li>
+      </ol>
+      <h4>Sifat Fisis</h4>
+      <ul>
+        <li>Semakin panjang rantai → titik didih makin tinggi.</li>
+        <li>Tidak larut dalam air, larut dalam pelarut organik.</li>
+        <li>C1–C4 gas, C5–C17 cair, ≥C18 padat.</li>
+      </ul>
+      <h4>Reaksi Khas</h4>
+      <ul>
+        <li><b>Substitusi</b>: CH₄ + Cl₂ → CH₃Cl + HCl (dengan cahaya UV).</li>
+        <li><b>Pembakaran</b>: CₙH₂ₙ₊₂ + O₂ → CO₂ + H₂O.</li>
+      </ul>
+    `,
+    contoh:[
+      { q:'Tentukan nama IUPAC: CH₃–CH(CH₃)–CH₂–CH₃', a:'Rantai terpanjang = 4 C (butana). Cabang metil di C2. Nama: <b>2-metilbutana</b>.' },
+      { q:'Tuliskan reaksi pembakaran sempurna propana.', a:'C₃H₈ + 5 O₂ → 3 CO₂ + 4 H₂O' },
+    ],
+  },
+  {
+    id:'alkena', ikon:'🟪', judul:'Alkena (CₙH₂ₙ)',
+    isi:`
+      <p><b>Alkena</b> = hidrokarbon tak jenuh dengan minimal satu ikatan <b>rangkap dua</b> C=C.</p>
+      <h4>Tata Nama</h4>
+      <ol>
+        <li>Rantai induk <b>harus memuat ikatan rangkap</b> dan terpanjang.</li>
+        <li>Penomoran dimulai dari ujung yang membuat posisi rangkap <b>terkecil</b>.</li>
+        <li>Akhiran menjadi <b>–ena</b> (bukan –ana).</li>
+      </ol>
+      <h4>Isomer cis–trans</h4>
+      <p>Terjadi jika setiap karbon pada C=C mengikat dua gugus berbeda.</p>
+      <ul>
+        <li><b>cis</b>: gugus sejenis berada di sisi yang sama.</li>
+        <li><b>trans</b>: gugus sejenis berada di sisi berlawanan.</li>
+      </ul>
+      <h4>Reaksi Adisi (khas alkena)</h4>
+      <ul>
+        <li>+ H₂ (katalis Ni/Pt) → alkana</li>
+        <li>+ Br₂ → menghilangkan warna air bromin (uji tak jenuh)</li>
+        <li>+ HX (HCl/HBr) → haloalkana</li>
+        <li>+ H₂O (katalis asam) → alkohol</li>
+      </ul>
+    `,
+    contoh:[
+      { q:'Nama IUPAC: CH₂=CH–CH₂–CH₃', a:'Rantai 4 C dengan rangkap di C1 → <b>1-butena</b>.' },
+      { q:'Mengapa air bromin memudar saat diteteskan ke alkena?', a:'Karena terjadi reaksi adisi Br₂ pada ikatan rangkap C=C, sehingga warna coklat bromin hilang.' },
+    ],
+  },
+  {
+    id:'alkuna', ikon:'🟩', judul:'Alkuna (CₙH₂ₙ₋₂)',
+    isi:`
+      <p><b>Alkuna</b> = hidrokarbon tak jenuh dengan ikatan <b>rangkap tiga</b> C≡C. Paling sederhana: etuna (C₂H₂), dikenal sebagai <b>asetilena</b>.</p>
+      <h4>Tata Nama</h4>
+      <ul>
+        <li>Rantai induk memuat ikatan rangkap tiga.</li>
+        <li>Nomor posisi rangkap tiga dibuat sekecil mungkin.</li>
+        <li>Akhiran <b>–una</b>.</li>
+      </ul>
+      <h4>Sifat &amp; Kegunaan</h4>
+      <ul>
+        <li>Etuna dipakai untuk las karbit (nyala sangat panas).</li>
+        <li>Mudah mengalami adisi (H₂, Br₂, HX, H₂O).</li>
+        <li>Adisi berlebih dapat menghasilkan alkana.</li>
+      </ul>
+      <h4>Reaksi Khas</h4>
+      <p>CH≡CH + 2H₂ → CH₃–CH₃ (dengan katalis Ni)</p>
+    `,
+    contoh:[
+      { q:'Nama IUPAC: CH≡C–CH₃', a:'Tiga karbon dengan rangkap tiga di C1 → <b>propuna</b>.' },
+      { q:'Mengapa nyala las karbit sangat panas?', a:'Karena pembakaran etuna (C₂H₂) menghasilkan suhu sangat tinggi akibat kandungan karbon tinggi.' },
+    ],
+  },
+  {
+    id:'haloalkana', ikon:'🟨', judul:'Haloalkana (R–X)',
+    isi:`
+      <p><b>Haloalkana</b> = senyawa turunan alkana dengan satu atau lebih atom H diganti <b>halogen</b> (F, Cl, Br, I).</p>
+      <h4>Tata Nama</h4>
+      <ul>
+        <li>Rantai induk = rantai terpanjang yang mengandung halogen.</li>
+        <li>Penomoran dari ujung terdekat dengan halogen.</li>
+        <li>Nama halogen sebagai awalan: <b>fluoro, kloro, bromo, iodo</b>.</li>
+      </ul>
+      <h4>Sifat</h4>
+      <ul>
+        <li>Titik didih lebih tinggi dari alkana sepadan (gaya dipol–dipol).</li>
+        <li>Tidak larut dalam air, larut dalam pelarut organik.</li>
+      </ul>
+      <h4>Reaksi</h4>
+      <ul>
+        <li><b>Substitusi</b> (dengan NaOH encer) → alkohol.</li>
+        <li><b>Eliminasi</b> (dengan NaOH alkohol panas) → alkena + HX.</li>
+      </ul>
+      <h4>Kegunaan Penting</h4>
+      <ul>
+        <li><b>Kloroform (CHCl₃)</b> — dulu anestesi, kini pelarut.</li>
+        <li><b>Freon (CFC)</b> — pendingin (kini dilarang karena merusak ozon).</li>
+        <li><b>PVC</b> — polimer dari vinil klorida (kloroetena).</li>
+        <li><b>Tetrafluoroetena</b> — bahan Teflon.</li>
+      </ul>
+    `,
+    contoh:[
+      { q:'Nama IUPAC: CH₃–CH₂–Cl', a:'Dua karbon dengan Cl di C1 → <b>kloroetana</b>.' },
+      { q:'Mengapa freon dilarang?', a:'Karena gas CFC dapat memecah molekul ozon di stratosfer sehingga menipiskan lapisan ozon.' },
+    ],
+  },
+  {
+    id:'perbandingan', ikon:'📊', judul:'Perbandingan Golongan',
+    isi:`
+      <table>
+        <tr><th>Aspek</th><th>Alkana</th><th>Alkena</th><th>Alkuna</th><th>Haloalkana</th></tr>
+        <tr><td>Rumus</td><td>CₙH₂ₙ₊₂</td><td>CₙH₂ₙ</td><td>CₙH₂ₙ₋₂</td><td>R–X</td></tr>
+        <tr><td>Ikatan</td><td>Tunggal</td><td>Rangkap 2</td><td>Rangkap 3</td><td>C–X</td></tr>
+        <tr><td>Jenuh?</td><td>Jenuh</td><td>Tak jenuh</td><td>Tak jenuh</td><td>Tergantung R</td></tr>
+        <tr><td>Reaksi khas</td><td>Substitusi</td><td>Adisi</td><td>Adisi</td><td>Substitusi/eliminasi</td></tr>
+        <tr><td>Contoh</td><td>CH₄</td><td>C₂H₄</td><td>C₂H₂</td><td>CH₃Cl</td></tr>
+      </table>
+    `,
+    contoh:[],
+  },
+  {
+    id:'cheatsheet', ikon:'⚡', judul:'Cheat Sheet & Istilah',
+    isi:`
+      <h4>Rumus Cepat</h4>
+      <ul>
+        <li>Derajat ketidakjenuhan (DoU) = (2C + 2 − H − X) / 2</li>
+        <li>Jumlah isomer alkana: C4=2, C5=3, C6=5, C7=9</li>
+      </ul>
+      <h4>Uji Kunci</h4>
+      <ul>
+        <li><b>Uji bromin</b>: alkena/alkuna melunturkan air bromin; alkana tidak.</li>
+        <li><b>Uji nyala</b>: alkana berjelaga sedikit.</li>
+      </ul>
+      <h4>Istilah Penting</h4>
+      <ul>
+        <li><b>Katenasi</b> — kemampuan C membentuk rantai.</li>
+        <li><b>Deret homolog</b> — deret senyawa dengan selisih CH₂.</li>
+        <li><b>Isomer</b> — rumus sama, struktur berbeda.</li>
+        <li><b>Gugus fungsi</b> — atom/gugus penentu sifat (mis. –X pada haloalkana).</li>
+        <li><b>Adisi</b> — penambahan atom pada ikatan rangkap.</li>
+        <li><b>Substitusi</b> — penggantian atom dengan atom lain.</li>
+      </ul>
+    `,
+    contoh:[],
+  },
+];
+
+/* ============================================================
+   7. 3D VIEWER
+   ============================================================ */
+let THREE = null;
+let viewer = {
+  ready:false, scene:null, camera:null, renderer:null, root:null,
+  curStruct:null, autoRotate:true, mode:'ball', showLabels:false,
+  theta:0.7, phi:1.15, radius:12, running:false, rafId:null,
+  atomMeshes:[], labelEls:[],
+};
+
+async function initViewer(){
+  const loading = $('#glLoading');
+  const canvas  = $('#gl');
+  try{
+    THREE = await import('three');
+  }catch(e){
+    loading.innerHTML = '⚠️ Gagal memuat mesin 3D.<br><span class="tiny">Periksa koneksi internet lalu coba lagi.</span><br><button class="btn primary" id="glRetry" style="margin-top:12px">Coba Lagi</button>';
+    const r = $('#glRetry'); if (r) r.onclick = () => location.reload();
+    return;
+  }
+
+  const wrap = $('#glWrap');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+
+  viewer.scene = new THREE.Scene();
+  viewer.scene.fog = new THREE.Fog(0x070d1a, 22, 42);
+
+  viewer.camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 200);
+  viewer.renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, preserveDrawingBuffer:true });
+  viewer.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  viewer.renderer.setSize(W, H, false);
+
+  viewer.scene.add(new THREE.AmbientLight(0xa8c4ff, 0.55));
+  viewer.scene.add(new THREE.HemisphereLight(0x7dd3fc, 0x1e1b4b, 0.7));
+  const dir1 = new THREE.DirectionalLight(0xffffff, 1.1);
+  dir1.position.set(6, 9, 8); viewer.scene.add(dir1);
+  const dir2 = new THREE.DirectionalLight(0xa78bfa, 0.55);
+  dir2.position.set(-7, -5, -6); viewer.scene.add(dir2);
+
+  viewer.root = new THREE.Group();
+  viewer.scene.add(viewer.root);
+
+  const grid = new THREE.GridHelper(20, 20, 0x1e293b, 0x131c2e);
+  grid.position.y = -4.2;
+  grid.material.transparent = true; grid.material.opacity = 0.55;
+  viewer.scene.add(grid);
+
+  viewer.ready = true;
+  loading.style.display = 'none';
+
+  bindOrbit(wrap);
+  resizeViewer();
+  window.addEventListener('resize', resizeViewer);
+  updateCamera();
+  startLoop();
+
+  setMoleculeFromSpec(PRESETS[2].spec, 'Propana');
+}
+
+function resizeViewer(){
+  if (!viewer.ready) return;
+  const wrap = $('#glWrap');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  viewer.camera.aspect = W/H;
+  viewer.camera.updateProjectionMatrix();
+  viewer.renderer.setSize(W, H, false);
+}
+
+function updateCamera(){
+  if (!viewer.ready) return;
+  const { theta, phi, radius } = viewer;
+  viewer.camera.position.set(
+    radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
+  viewer.camera.lookAt(0, 0, 0);
+}
+
+function bindOrbit(el){
+  let dragging = false, lx = 0, ly = 0, lastTap = 0;
+  let pinchDist = 0;
+
+  el.addEventListener('pointerdown', e => {
+    if (e.target.closest('.pill')) return;
+    dragging = true; lx = e.clientX; ly = e.clientY;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lx, dy = e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    viewer.theta -= dx * 0.008;
+    viewer.phi = clamp(viewer.phi - dy * 0.008, 0.25, Math.PI - 0.25);
+    updateCamera();
+  });
+  const end = e => { dragging = false; };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+
+  el.addEventListener('wheel', e => {
+    e.preventDefault();
+    viewer.radius = clamp(viewer.radius + e.deltaY * 0.012, 5, 28);
+    updateCamera();
+  }, { passive:false });
+
+  el.addEventListener('pointerup', e => {
+    const now = Date.now();
+    if (now - lastTap < 320){
+      viewer.theta = 0.7; viewer.phi = 1.15; viewer.radius = 12; updateCamera();
+      toast('Kamera direset');
+    }
+    lastTap = now;
+  });
+
+  el.addEventListener('touchstart', e => {
+    if (e.touches.length === 2){
+      pinchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    }
+  }, {passive:true});
+  el.addEventListener('touchmove', e => {
+    if (e.touches.length === 2 && pinchDist){
+      const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      viewer.radius = clamp(viewer.radius * (pinchDist / d), 5, 28);
+      pinchDist = d;
+      updateCamera();
+    }
+  }, {passive:true});
+}
+
+function disposeMolecule(){
+  if (!viewer.root) return;
+  for (const m of viewer.atomMeshes){
+    viewer.root.remove(m);
+    if (m.geometry) m.geometry.dispose();
+    if (m.material) m.material.dispose();
+  }
+  viewer.atomMeshes = [];
+  [...viewer.root.children].forEach(ch => {
+    viewer.root.remove(ch);
+    if (ch.geometry) ch.geometry.dispose();
+    if (ch.material) ch.material.dispose();
+  });
+  viewer.labelEls.forEach(l => l.remove());
+  viewer.labelEls = [];
+  $('#labels').innerHTML = '';
+}
+
+function addBond3D(p1, p2, order){
+  const T = THREE;
+  const start = new T.Vector3(p1[0],p1[1],p1[2]);
+  const end   = new T.Vector3(p2[0],p2[1],p2[2]);
+  const mid   = start.clone().add(end).multiplyScalar(0.5);
+  const dir   = end.clone().sub(start);
+  const len   = dir.length();
+  dir.normalize();
+
+  const offsets = order === 1 ? [0] : order === 2 ? [-0.075, 0.075] : [-0.12, 0, 0.12];
+  let perp = new T.Vector3(0,1,0);
+  if (Math.abs(dir.dot(perp)) > 0.92) perp.set(1,0,0);
+  const side = new T.Vector3().crossVectors(dir, perp).normalize();
+
+  for (const off of offsets){
+    const geo = new T.CylinderGeometry(0.075, 0.075, len, 12, 1);
+    const mat = new T.MeshStandardMaterial({ color:0xcbd5e1, roughness:0.55, metalness:0.15 });
+    const cyl = new T.Mesh(geo, mat);
+    cyl.position.copy(mid).add(side.clone().multiplyScalar(off));
+    cyl.quaternion.setFromUnitVectors(new T.Vector3(0,1,0), dir);
+    viewer.root.add(cyl);
+  }
+}
+
+function buildMolecule3D(struct){
+  const T = THREE;
+  disposeMolecule();
+  const pos = struct.pos;
+  const idx = struct.idx;
+  const N = struct.atoms.length;
+  const scale = N > 22 ? 0.82 : N > 14 ? 0.92 : 1;
+
+  for (const b of struct.bonds){
+    const i = idx[b.a], j = idx[b.b];
+    if (i == null || j == null) continue;
+    addBond3D(
+      [pos[i*3]*scale, pos[i*3+1]*scale, pos[i*3+2]*scale],
+      [pos[j*3]*scale, pos[j*3+1]*scale, pos[j*3+2]*scale],
+      b.order
+    );
+  }
+
+  for (let i=0;i<N;i++){
+    const el = struct.atoms[i].el;
+    const conf = ELEM[el] || ELEM.C;
+    const r = (viewer.mode === 'space' ? conf.r * 1.85 : conf.r) * scale;
+    const geo = new T.SphereGeometry(r, 22, 16);
+    const mat = new T.MeshStandardMaterial({
+      color: conf.color,
+      roughness: el === 'H' ? 0.35 : 0.42,
+      metalness: el === 'H' ? 0.02 : 0.25,
+      emissive: el === 'C' ? 0x0a0f1c : 0x000000,
+    });
+    const mesh = new T.Mesh(geo, mat);
+    mesh.position.set(pos[i*3]*scale, pos[i*3+1]*scale, pos[i*3+2]*scale);
+    viewer.root.add(mesh);
+    viewer.atomMeshes.push(mesh);
+  }
+
+  if (viewer.showLabels){
+    const cont = $('#labels');
+    cont.innerHTML = '';
+    viewer.labelEls = [];
+    struct.atoms.forEach((a, i) => {
+      const span = document.createElement('span');
+      span.textContent = a.el;
+      cont.appendChild(span);
+      viewer.labelEls.push({ el: span, i });
+    });
+  }
+}
+
+function updateLabels(){
+  if (!viewer.showLabels || !viewer.ready || !viewer.curStruct) return;
+  const wrap = $('#glWrap');
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  const v = new THREE.Vector3();
+  for (const L of viewer.labelEls){
+    const m = viewer.atomMeshes[L.i];
+    if (!m) continue;
+    v.copy(m.position).project(viewer.camera);
+    const x = (v.x * 0.5 + 0.5) * W;
+    const y = (-v.y * 0.5 + 0.5) * H;
+    const visible = v.z < 1;
+    L.el.style.display = visible ? 'block' : 'none';
+    L.el.style.left = x + 'px';
+    L.el.style.top  = y + 'px';
+  }
+}
+
+function startLoop(){
+  if (viewer.running) return;
+  viewer.running = true;
+  const tick = () => {
+    viewer.rafId = requestAnimationFrame(tick);
+    if (!viewer.ready) return;
+    const aktif = $('#v-lab').classList.contains('on') && !document.hidden;
+    if (!aktif) return;
+    if (viewer.autoRotate && Store.state.pengaturan.autoRotate){
+      viewer.theta += 0.0035;
+      updateCamera();
+    }
+    viewer.renderer.render(viewer.scene, viewer.camera);
+    updateLabels();
+  };
+  tick();
+}
+
+function setMoleculeFromSpec(spec, labelNama){
+  const struct = buildStructure(spec);
+  viewer.curStruct = struct;
+  if (viewer.ready) buildMolecule3D(struct);
+
+  const rumus = formulaOf(struct);
+  const nama = labelNama || iupacName(struct);
+  const jenis = classOf(struct);
+  const cCount = struct.atoms.filter(a=>a.el==='C').length;
+  const dou = degreesOfUnsaturation(struct);
+
+  $('#molRumus').textContent = rumus;
+  $('#molNama').textContent = nama;
+  $('#molMeta').innerHTML = `
+    <span>${jenis}</span>
+    <span>${cCount} atom C</span>
+    <span>DoU = ${dou}</span>
+    <span>${struct.atoms.length} atom total</span>
+  `;
+  return struct;
+}
+
+/* ============================================================
+   8. ROUTER
+   ============================================================ */
+const TITLES = { home:'Beranda', materi:'Materi', lab:'Lab 3D', games:'Games', profil:'Profil' };
+function go(tab){
+  $$('#tabbar .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + tab));
+  $('#pageTitle').textContent = TITLES[tab] || 'HydroQuest';
+  $('#views').scrollTop = 0;
+  sfx.tap();
+  if (tab === 'lab') setTimeout(resizeViewer, 40);
+  if (tab === 'profil') renderProfil();
+  if (tab === 'games') renderGamesHome();
+  if (tab === 'materi') renderMateri();
+  if (tab === 'home') renderHome();
+}
+
+/* ============================================================
+   9. HEADER & HOME
+   ============================================================ */
+function syncHeader(){
+  const s = Store.state;
+  $('#chipLv').textContent = 'Lv ' + s.progres.level;
+  $('#chipXp').textContent = s.progres.xp + ' XP';
+  $('#chipHp').textContent = '❤️ ' + s.progres.nyawa;
+}
+
+function renderHome(){
+  const s = Store.state;
+  const cur = s.progres.xp - xpForLevel(s.progres.level-1);
+  const need = xpForLevel(s.progres.level) - xpForLevel(s.progres.level-1);
+  $('#homeLvTxt').textContent = 'Level ' + s.progres.level;
+  $('#homeXpTxt').textContent = `${cur} / ${need} XP`;
+  $('#homePb').style.width = clamp((cur/need)*100, 0, 100) + '%';
+
+  const misi = [];
+  if (s.progres.materiDibaca.length < MATERI.length) misi.push(`📘 Baca materi (${s.progres.materiDibaca.length}/${MATERI.length})`);
+  if (!s.games.stage1?.selesai) misi.push('🃏 Selesaikan Stage 1: Kartu Kilat');
+  else if (!s.games.stage2?.selesai) misi.push('📝 Selesaikan Stage 2: Tebak Nama');
+  else if (!s.games.stage3?.selesai) misi.push('🏗️ Selesaikan Stage 3: Bangun Struktur');
+  else if (!s.games.stage4?.selesai) misi.push('🔍 Selesaikan Stage 4: Isomer Cepat');
+  if (s.progres.molekulDisimpan.length < 5) misi.push(`🧬 Simpan 5 molekul (${s.progres.molekulDisimpan.length}/5)`);
+  if (!misi.length) misi.push('🎉 Semua misi selesai! Coba cetak sertifikatmu.');
+
+  $('#homeMisi').innerHTML = misi.map(m => `<div style="padding:5px 0">${esc(m)}</div>`).join('');
+}
+
+/* ============================================================
+   10. MATERI
+   ============================================================ */
+function renderMateri(){
+  const box = $('#materiList');
+  const s = Store.state;
+  box.innerHTML = MATERI.map(m => {
+    const dibaca = s.progres.materiDibaca.includes(m.id);
+    const contoh = (m.contoh||[]).map((c,i) => `
+      <div class="contoh" data-contoh="${m.id}-${i}">
+        <div class="q">❓ ${esc(c.q)}</div>
+        <button class="btn ghost" data-reveal="${m.id}-${i}" style="min-height:34px;padding:5px 10px;font-size:11.5px">Lihat Pembahasan</button>
+        <div class="a">${c.a}</div>
+      </div>`).join('');
+    return `
+      <div class="acc" data-acc="${m.id}">
+        <div class="acc-h" data-toggle="${m.id}">
+          <span class="ico">${m.ikon}</span>
+          <span class="ttl">${esc(m.judul)}</span>
+          ${dibaca ? '<span class="done-tag">✓ dibaca</span>' : ''}
+          <span class="chev">▶</span>
+        </div>
+        <div class="acc-b">
+          <div class="acc-inner">
+            ${m.isi}
+            ${contoh}
+            <button class="btn ${dibaca?'':'primary'} block" data-mark="${m.id}" style="margin-top:12px" ${dibaca?'disabled':''}>
+              ${dibaca ? '✓ Sudah dibaca' : 'Tandai sudah dibaca (+15 XP)'}
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const persen = Math.round((s.progres.materiDibaca.length / MATERI.length) * 100);
+  box.insertAdjacentHTML('afterbegin', `
+    <div class="card" style="padding:11px">
+      <div class="row" style="margin:0 0 6px">
+        <span class="tiny">Progres materi</span>
+        <span class="tiny" style="color:var(--neon);font-weight:800">${persen}%</span>
+      </div>
+      <div class="pbar"><i style="width:${persen}%"></i></div>
+    </div>`);
+}
+
+/* ============================================================
+   11. LAB 3D (UI Builder)
+   ============================================================ */
+let builder = { n:3, unsat:[], subs:[], branchType:null, haloType:null };
+
+function renderBuilder(){
+  $('#bN').textContent = builder.n;
+
+  const ub = $('#bUnsatPos');
+  const curUnsat = builder.unsat[0];
+  if (curUnsat){
+    ub.style.display = 'flex';
+    let html = '';
+    for (let i=1;i<builder.n;i++){
+      const aktif = curUnsat.pos === i;
+      html += `<button class="chipbtn ${aktif?'on':''}" data-upos="${i}">C${i}–C${i+1}</button>`;
+    }
+    ub.innerHTML = html;
+  } else ub.style.display = 'none';
+
+  const bp = $('#bBranchPos');
+  if (builder.branchType){
+    let html = '';
+    for (let i=1;i<=builder.n;i++){
+      html += `<button class="chipbtn" data-bpos="${i}">C${i}</button>`;
+    }
+    bp.innerHTML = html;
+  } else bp.innerHTML = '<span class="tiny">Pilih jenis cabang dahulu.</span>';
+
+  const hp = $('#bHaloPos');
+  if (builder.haloType){
+    let html = '';
+    for (let i=1;i<=builder.n;i++){
+      html += `<button class="chipbtn" data-hpos="${i}">C${i}</button>`;
+    }
+    hp.innerHTML = html;
+  } else hp.innerHTML = '<span class="tiny">Pilih jenis halogen dahulu.</span>';
+
+  const list = $('#bSubList');
+  if (!builder.subs.length) list.innerHTML = '<span class="tiny">Belum ada cabang/halogen.</span>';
+  else list.innerHTML = builder.subs.map((s,i) => {
+    const nm = { methyl:'metil', ethyl:'etil', propyl:'propil', F:'fluoro', Cl:'kloro', Br:'bromo', I:'iodo' }[s.type] || s.type;
+    return `<div class="sub-item"><span>C${s.pos} → <b>${nm}</b></span><button data-delsub="${i}" aria-label="Hapus">✕</button></div>`;
+  }).join('');
+
+  $$('#bUnsat .chipbtn').forEach(b => b.classList.toggle('on', (builder.unsat.length===0 && b.dataset.u==='0') || (builder.unsat[0] && b.dataset.u == builder.unsat[0].order)));
+  $$('#bBranchType .chipbtn').forEach(b => b.classList.toggle('on', b.dataset.bt === builder.branchType));
+  $$('#bHaloType .chipbtn').forEach(b => b.classList.toggle('on', b.dataset.ht === builder.haloType));
+}
+
+function applyBuilder(){
+  const spec = { n:builder.n, unsat:[...builder.unsat], subs:[...builder.subs] };
+  const struct = setMoleculeFromSpec(spec);
+  window._lastStruct = struct;
+  window._lastSpec = spec;
+}
+
+function renderPresets(){
+  const box = $('#presetList');
+  box.innerHTML = PRESETS.map((p,i) => `<button data-preset="${i}">${esc(p.nama)}</button>`).join('');
+  const mine = Store.state.progres.molekulDisimpan;
+  const mb = $('#myMols');
+  if (!mine.length) mb.innerHTML = '<span class="tiny">Belum ada molekul tersimpan.</span>';
+  else mb.innerHTML = mine.map((m,i) => `<button data-mymol="${i}">${esc(m.nama)}</button>`).join('');
+}
+
+/* ============================================================
+   12. GAMES
+   ============================================================ */
+const STAGES = [
+  { id:'stage1', no:1, nama:'Kartu Kilat', desc:'Buka tutup kartu konsep hidrokarbon', tipe:'flash' },
+  { id:'stage2', no:2, nama:'Tebak Nama',  desc:'Tentukan nama IUPAC dari struktur',  tipe:'pilih' },
+  { id:'stage3', no:3, nama:'Bangun Struktur', desc:'Susun struktur dari nama senyawa', tipe:'bangun' },
+  { id:'stage4', no:4, nama:'Isomer Cepat', desc:'Hitung jumlah isomer struktural',  tipe:'pilih' },
+];
+
+const FLASHCARDS = [
+  { q:'Rumus umum alkana?', a:'CnH2n+2', tip:'Semua ikatan C–C tunggal (jenuh).' },
+  { q:'Rumus umum alkena?', a:'CnH2n', tip:'Mengandung satu ikatan rangkap dua C=C.' },
+  { q:'Rumus umum alkuna?', a:'CnH2n−2', tip:'Mengandung satu ikatan rangkap tiga C≡C.' },
+  { q:'Gugus fungsi haloalkana?', a:'–X (F, Cl, Br, I)', tip:'Satu atau lebih H diganti halogen.' },
+  { q:'Nama IUPAC CH₃–CH₂–CH₃?', a:'Propana', tip:'Rantai lurus 3 karbon.' },
+  { q:'Reaksi khas alkana?', a:'Substitusi', tip:'Contoh: CH₄ + Cl₂ → CH₃Cl + HCl dengan UV.' },
+  { q:'Reaksi khas alkena &amp; alkuna?', a:'Adisi', tip:'Menambahkan atom pada ikatan rangkap.' },
+  { q:'Fungsi uji air bromin?', a:'Membedakan senyawa jenuh &amp; tak jenuh', tip:'Air bromin memudar pada alkena/alkuna.' },
+  { q:'Nama dagang etuna?', a:'Asetilena', tip:'Dipakai untuk las karbit.' },
+  { q:'Berapa isomer C₄H₁₀?', a:'2 isomer', tip:'n-butana dan 2-metilpropana.' },
+  { q:'Kegunaan kloroform (CHCl₃)?', a:'Pelarut organik', tip:'Dahulu dipakai sebagai anestesi.' },
+  { q:'Apa itu freon?', a:'Haloalkana (CFC)', tip:'Pendingin yang dilarang karena merusak ozon.' },
+  { q:'Monomer pembentuk PVC?', a:'Vinil klorida (kloroetena)', tip:'CH₂=CH–Cl.' },
+  { q:'Nama IUPAC CH₃–CH(CH₃)–CH₃?', a:'2-Metilpropana', tip:'Rantai terpanjang 3 C, cabang di C2.' },
+  { q:'Alkena paling sederhana?', a:'Etena (C₂H₄)', tip:'Dahulu dipakai mematangkan buah.' },
+  { q:'Derajat ketidakjenuhan C₅H₁₀?', a:'1', tip:'(2×5 + 2 − 10)/2 = 1.' },
+];
+
+const STAGE2_Q = [
+  { spec:{n:4,unsat:[],subs:[]}, ans:'Butana', opts:['Butana','Propana','Pentana','2-Metilpropana'], ex:'Rantai lurus 4 karbon tanpa cabang.' },
+  { spec:{n:3,unsat:[],subs:[{pos:2,type:'methyl'}]}, ans:'2-Metilpropana', opts:['Propana','2-Metilpropana','Butana','2-Metilbutana'], ex:'Rantai induk 3 C dengan cabang metil di C2.' },
+  { spec:{n:5,unsat:[],subs:[{pos:2,type:'methyl'}]}, ans:'2-Metilpentana', opts:['2-Metilpentana','3-Metilpentana','2-Metilbutana','Heksana'], ex:'Rantai induk 5 C, cabang metil di C2.' },
+  { spec:{n:4,unsat:[{pos:1,order:2}],subs:[]}, ans:'1-Butena', opts:['1-Butena','2-Butena','Butana','1-Butuna'], ex:'Rangkap dua di antara C1–C2.' },
+  { spec:{n:3,unsat:[{pos:1,order:2}],subs:[]}, ans:'Propena', opts:['Propena','Propana','Propuna','1-Butena'], ex:'3 karbon dengan rangkap dua di C1.' },
+  { spec:{n:2,unsat:[{pos:1,order:3}],subs:[]}, ans:'Etuna', opts:['Etuna','Etena','Etana','Propuna'], ex:'2 karbon dengan rangkap tiga.' },
+  { spec:{n:3,unsat:[{pos:1,order:3}],subs:[]}, ans:'Propuna', opts:['Propuna','Propena','Propana','Etuna'], ex:'3 karbon dengan rangkap tiga di C1.' },
+  { spec:{n:2,unsat:[],subs:[{pos:1,type:'Cl'}]}, ans:'Kloroetana', opts:['Kloroetana','Klorometana','Bromoetana','1,2-Dikloroetana'], ex:'2 karbon dengan Cl di C1.' },
+  { spec:{n:1,unsat:[],subs:[{pos:1,type:'Cl'},{pos:1,type:'Cl'},{pos:1,type:'Cl'}]}, ans:'Triklorometana', opts:['Triklorometana','Klorometana','Diklorometana','Tetraklorometana'], ex:'Metana dengan 3 atom H diganti Cl (kloroform).' },
+  { spec:{n:3,unsat:[],subs:[{pos:1,type:'Cl'},{pos:2,type:'Cl'}]}, ans:'1,2-Dikloropropana', opts:['1,2-Dikloropropana','1,1-Dikloropropana','1,3-Dikloropropana','1,2-Dikloroetana'], ex:'Cl di C1 dan C2 pada rantai propana.' },
+  { spec:{n:6,unsat:[],subs:[{pos:3,type:'methyl'}]}, ans:'3-Metilheksana', opts:['3-Metilheksana','2-Metilheksana','3-Metilpentana','Heptana'], ex:'Rantai 6 C, cabang metil di C3.' },
+  { spec:{n:4,unsat:[],subs:[{pos:2,type:'methyl'}]}, ans:'2-Metilbutana', opts:['2-Metilbutana','2-Metilpropana','3-Metilbutana','Pentana'], ex:'Rantai 4 C, cabang metil di C2.' },
+];
+
+const STAGE3_Q = [
+  { nama:'Metana',           spec:{n:1,unsat:[],subs:[]} },
+  { nama:'Etana',            spec:{n:2,unsat:[],subs:[]} },
+  { nama:'Propana',          spec:{n:3,unsat:[],subs:[]} },
+  { nama:'Butana',           spec:{n:4,unsat:[],subs:[]} },
+  { nama:'2-Metilpropana',   spec:{n:3,unsat:[],subs:[{pos:2,type:'methyl'}]} },
+  { nama:'2-Metilbutana',    spec:{n:4,unsat:[],subs:[{pos:2,type:'methyl'}]} },
+  { nama:'Etena',            spec:{n:2,unsat:[{pos:1,order:2}],subs:[]} },
+  { nama:'Propuna',          spec:{n:3,unsat:[{pos:1,order:3}],subs:[]} },
+  { nama:'Kloroetana',       spec:{n:2,unsat:[],subs:[{pos:1,type:'Cl'}]} },
+  { nama:'1,2-Dikloroetana', spec:{n:2,unsat:[],subs:[{pos:1,type:'Cl'},{pos:2,type:'Cl'}]} },
+];
+
+const STAGE4_Q = [
+  { rumus:'C₄H₁₀',  ans:2, opts:[1,2,3,4], ex:'n-butana dan 2-metilpropana.' },
+  { rumus:'C₅H₁₂',  ans:3, opts:[2,3,4,5], ex:'n-pentana, 2-metilbutana, 2,2-dimetilpropana.' },
+  { rumus:'C₆H₁₄',  ans:5, opts:[3,4,5,6], ex:'5 isomer struktural.' },
+  { rumus:'C₇H₁₆',  ans:9, opts:[7,8,9,10], ex:'9 isomer struktural.' },
+  { rumus:'C₃H₈',   ans:1, opts:[1,2,3,4], ex:'Hanya propana.' },
+  { rumus:'C₄H₈ (alkena)', ans:3, opts:[2,3,4,5], ex:'1-butena, 2-butena, 2-metilpropena.' },
+];
+
+let game = null;
+
+function renderGamesHome(){
+  const s = Store.state;
+  const list = $('#stageList');
+  list.innerHTML = STAGES.map((st, i) => {
+    const g = s.games[st.id];
+    const locked = i > 0 && !s.games[STAGES[i-1].id]?.selesai;
+    const stars = g?.bintang || 0;
+    return `
+      <div class="stage ${locked?'locked':''}" data-stage="${st.id}">
+        <div class="no">${st.no}</div>
+        <div class="body">
+          <div class="t">${st.nama}</div>
+          <div class="d">${st.desc}</div>
+          <div class="stars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+        </div>
+        <div class="go">${locked ? '🔒' : g?.selesai ? '✅' : '▶'}</div>
+      </div>`;
+  }).join('');
+}
+
+function startStage(id){
+  const s = Store.state;
+  const idx = STAGES.findIndex(x => x.id === id);
+  if (idx > 0 && !s.games[STAGES[idx-1].id]?.selesai){
+    toast('Selesaikan stage sebelumnya dulu', 'no');
+    return;
+  }
+  const st = STAGES[idx];
+  let data = [];
+  if (st.tipe === 'flash') data = shuffle([...FLASHCARDS]);
+  else if (st.id === 'stage2') data = shuffle([...STAGE2_Q]);
+  else if (st.id === 'stage3') data = shuffle([...STAGE3_Q]);
+  else if (st.id === 'stage4') data = shuffle([...STAGE4_Q]);
+
+  game = {
+    stage: st, data, idx:0, benar:0, salah:0,
+    nyawa: 3, streak: 0, maxStreak: 0, xp: 0,
+    mulai: Date.now(), nyawaUtuh: true,
+    paham: new Set(),
+    build: { n:1, unsat:[], subs:[], branchType:null, haloType:null },
+  };
+  $('#gamesHome').style.display = 'none';
+  $('#gamePlay').style.display = 'block';
+  renderGame();
+}
+
+function shuffle(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function renderGame(){
+  if (!game) return;
+  const box = $('#gamePlay');
+  const st = game.stage;
+
+  if (game.idx >= game.data.length){ renderResult(); return; }
+
+  const head = `
+    <div class="hud">
+      <span>Stage ${st.no} · ${st.nama}</span>
+      <span>${game.idx+1}/${game.data.length}</span>
+      <span class="st">❤️ ${game.nyawa} · 🔥 ${game.streak}</span>
+    </div>`;
+
+  if (st.tipe === 'flash'){
+    const c = game.data[game.idx];
+    box.innerHTML = head + `
+      <div class="fc-wrap"><div class="fc" id="fc">
+        <div class="fc-f">${c.q}<div class="tiny" style="margin-top:12px">ketuk untuk membalik</div></div>
+        <div class="fc-b">${c.a}<div class="tip">${c.tip}</div></div>
+      </div></div>
+      <div class="grid2">
+        <button class="btn good" id="fcPaham">✓ Paham (+8 XP)</button>
+        <button class="btn warn" id="fcUlang">↻ Ulangi</button>
+      </div>
+      <button class="btn ghost block" id="fcKeluar" style="margin-top:8px">Keluar</button>
+    `;
+    $('#fc').onclick = () => { $('#fc').classList.toggle('flip'); sfx.tap(); };
+    $('#fcPaham').onclick = () => { game.paham.add(game.idx); game.benar++; game.streak++; game.maxStreak = Math.max(game.maxStreak, game.streak); addXP(8); sfx.ok(); nextQ(); };
+    $('#fcUlang').onclick = () => { game.data.push(game.data[game.idx]); sfx.tap(); nextQ(); };
+    $('#fcKeluar').onclick = () => exitGame();
+    return;
+  }
+
+  if (st.id === 'stage2'){
+    const q = game.data[game.idx];
+    const struct = buildStructure(q.spec);
+    const svg = structSVG(struct, 320, 180);
+    const opts = q.opts.map((o,i) => `<button class="opt" data-opt="${i}">${esc(o)}</button>`).join('');
+    box.innerHTML = head + `
+      <div class="qbox">
+        <div class="qq">Apa nama IUPAC senyawa berikut?</div>
+        <div style="display:grid;place-items:center;margin:8px 0">${svg}</div>
+        <div class="opts">${opts}</div>
+        <div class="fb" id="fb"></div>
+      </div>
+      <button class="btn ghost block" id="gKeluar">Keluar</button>
+    `;
+    $$('.opt', box).forEach(b => b.onclick = () => answerStage2(b, q));
+    $('#gKeluar').onclick = () => exitGame();
+    return;
+  }
+
+  if (st.id === 'stage3'){
+    const q = game.data[game.idx];
+    const bb = game.build;
+    let uposHtml = '';
+    if (bb.unsat.length){
+      for (let i=1;i<bb.n;i++) uposHtml += `<button class="chipbtn ${bb.unsat[0].pos===i?'on':''}" data-upos="${i}">C${i}=C${i+1}</button>`;
+    }
+    let bposHtml = '';
+    if (bb.branchType){ for (let i=1;i<=bb.n;i++) bposHtml += `<button class="chipbtn" data-bpos="${i}">C${i}</button>`; }
+    let hposHtml = '';
+    if (bb.haloType){ for (let i=1;i<=bb.n;i++) hposHtml += `<button class="chipbtn" data-hpos="${i}">C${i}</button>`; }
+
+    const structNow = buildStructure({n:bb.n, unsat:[...bb.unsat], subs:[...bb.subs]});
+    const svgNow = structSVG(structNow, 320, 170);
+
+    box.innerHTML = head + `
+      <div class="qbox">
+        <div class="qq">Susun struktur: <span style="color:var(--neon)">${esc(q.nama)}</span></div>
+        <div style="display:grid;place-items:center;margin:8px 0">${svgNow}</div>
+
+        <div class="row"><label>Jumlah C rantai utama</label>
+          <div class="stepper"><button data-gn="-1">−</button><span class="val">${bb.n}</span><button data-gn="1">+</button></div>
+        </div>
+        <div class="row" style="flex-direction:column;align-items:flex-start;gap:5px">
+          <label>Ikatan rangkap</label>
+          <div class="chiprow">
+            <button class="chipbtn ${!bb.unsat.length?'on':''}" data-gu="0">tunggal</button>
+            <button class="chipbtn ${bb.unsat[0]?.order===2?'on':''}" data-gu="2">rangkap 2</button>
+            <button class="chipbtn ${bb.unsat[0]?.order===3?'on':''}" data-gu="3">rangkap 3</button>
+          </div>
+          <div class="chiprow">${uposHtml}</div>
+        </div>
+        <div class="row" style="flex-direction:column;align-items:flex-start;gap:5px">
+          <label>Cabang alkil</label>
+          <div class="chiprow">
+            <button class="chipbtn ${bb.branchType==='methyl'?'on':''}" data-gbt="methyl">metil</button>
+            <button class="chipbtn ${bb.branchType==='ethyl'?'on':''}" data-gbt="ethyl">etil</button>
+            <button class="chipbtn ${bb.branchType==='propyl'?'on':''}" data-gbt="propyl">propil</button>
+          </div>
+          <div class="chiprow">${bposHtml}</div>
+        </div>
+        <div class="row" style="flex-direction:column;align-items:flex-start;gap:5px">
+          <label>Halogen</label>
+          <div class="chiprow">
+            ${['F','Cl','Br','I'].map(h=>`<button class="chipbtn ${bb.haloType===h?'on':''}" data-ght="${h}">${h}</button>`).join('')}
+          </div>
+          <div class="chiprow">${hposHtml}</div>
+        </div>
+        <div class="sub-list">${bb.subs.map((s,i)=>`<div class="sub-item"><span>C${s.pos} → ${esc(s.type)}</span><button data-gdel="${i}">✕</button></div>`).join('')}</div>
+
+        <div class="grid2" style="margin-top:10px">
+          <button class="btn" id="gReset">♻️ Reset</button>
+          <button class="btn primary" id="gCek">✓ Periksa</button>
+        </div>
+        <div class="fb" id="fb"></div>
+      </div>
+      <button class="btn ghost block" id="gKeluar">Keluar</button>
+    `;
+    bindStage3(q, box);
+    return;
+  }
+
+  if (st.id === 'stage4'){
+    const q = game.data[game.idx];
+    const opts = q.opts.map((o,i) => `<button class="opt" data-opt="${i}">${o} isomer</button>`).join('');
+    box.innerHTML = head + `
+      <div class="qbox">
+        <div class="qq">Berapa jumlah isomer struktural dari <span style="color:var(--neon)">${q.rumus}</span>?</div>
+        <div class="opts">${opts}</div>
+        <div class="fb" id="fb"></div>
+      </div>
+      <button class="btn ghost block" id="gKeluar">Keluar</button>
+    `;
+    $$('.opt', box).forEach((b,i) => b.onclick = () => {
+      const ok = q.opts[i] === q.ans;
+      $$('.opt', box).forEach((x,j) => { x.disabled = true; if (q.opts[j]===q.ans) x.classList.add('right'); });
+      if (!ok) b.classList.add('wrong');
+      const fb = $('#fb'); fb.className = 'fb on ' + (ok?'ok':'no');
+      fb.innerHTML = (ok?'✅ Benar! ':'❌ Belum tepat. ') + `<b>${q.ans} isomer.</b> ${q.ex}`;
+      handleAnswer(ok);
+    });
+    $('#gKeluar').onclick = () => exitGame();
+  }
+}
+
+function bindStage3(q, box){
+  const bb = game.build;
+  const refresh = () => renderGame();
+  const target = buildStructure(q.spec);
+  const targetCanon = canonicalForm(target);
+
+  box.querySelectorAll('[data-gn]').forEach(b => b.onclick = () => {
+    bb.n = clamp(bb.n + (+b.dataset.gn), 1, 10);
+    bb.unsat = []; bb.subs = bb.subs.filter(s => s.pos <= bb.n);
+    sfx.tap(); refresh();
+  });
+  box.querySelectorAll('[data-gu]').forEach(b => b.onclick = () => {
+    const v = +b.dataset.gu;
+    if (v === 0) bb.unsat = [];
+    else bb.unsat = [{ pos:1, order:v }];
+    sfx.tap(); refresh();
+  });
+  box.querySelectorAll('[data-upos]').forEach(b => b.onclick = () => {
+    bb.unsat = [{ pos:+b.dataset.upos, order:bb.unsat[0]?.order || 2 }];
+    sfx.tap(); refresh();
+  });
+  box.querySelectorAll('[data-gbt]').forEach(b => b.onclick = () => { bb.branchType = b.dataset.gbt; sfx.tap(); refresh(); });
+  box.querySelectorAll('[data-ght]').forEach(b => b.onclick = () => { bb.haloType = b.dataset.ght; sfx.tap(); refresh(); });
+  box.querySelectorAll('[data-bpos]').forEach(b => b.onclick = () => {
+    if (!bb.branchType) return;
+    bb.subs.push({ pos:+b.dataset.bpos, type:bb.branchType });
+    sfx.tap(); refresh();
+  });
+  box.querySelectorAll('[data-hpos]').forEach(b => b.onclick = () => {
+    if (!bb.haloType) return;
+    bb.subs.push({ pos:+b.dataset.hpos, type:bb.haloType });
+    sfx.tap(); refresh();
+  });
+  box.querySelectorAll('[data-gdel]').forEach(b => b.onclick = () => { bb.subs.splice(+b.dataset.gdel,1); sfx.tap(); refresh(); });
+  $('#gReset').onclick = () => { game.build = { n:1, unsat:[], subs:[], branchType:null, haloType:null }; sfx.tap(); refresh(); };
+  $('#gKeluar').onclick = () => exitGame();
+  $('#gCek').onclick = () => {
+    const user = buildStructure({ n:bb.n, unsat:[...bb.unsat], subs:[...bb.subs] });
+    const ok = canonicalForm(user) === targetCanon;
+    const fb = $('#fb');
+    fb.className = 'fb on ' + (ok?'ok':'no');
+    fb.innerHTML = ok
+      ? `✅ Strukturmu tepat! Nama yang benar: <b>${q.nama}</b>.`
+      : `❌ Belum tepat. Coba bandingkan jumlah C, posisi cabang, atau jenis ikatan. <br>Nama target: <b>${q.nama}</b>.`;
+    $('#gCek').disabled = true;
+    setTimeout(()=>handleAnswer(ok), 400);
+  };
+}
+
+function answerStage2(btn, q){
+  const idx = +btn.dataset.opt;
+  const ok = q.opts[idx] === q.ans;
+  const all = $$('.opt', $('#gamePlay'));
+  all.forEach((b,i) => {
+    b.disabled = true;
+    if (q.opts[i] === q.ans) b.classList.add('right');
+  });
+  if (!ok) btn.classList.add('wrong');
+  const fb = $('#fb');
+  fb.className = 'fb on ' + (ok?'ok':'no');
+  fb.innerHTML = (ok?'✅ Tepat! ':'❌ Belum tepat. ') + `Jawaban benar: <b>${esc(q.ans)}</b>. ${q.ex}`;
+  handleAnswer(ok);
+}
+
+function handleAnswer(ok){
+  if (!game) return;
+  if (ok){
+    game.benar++;
+    game.streak++;
+    game.maxStreak = Math.max(game.maxStreak, game.streak);
+    const mult = game.streak >= 5 ? 3 : game.streak >= 3 ? 2 : game.streak >= 2 ? 1.5 : 1;
+    const xp = Math.round(20 * mult);
+    game.xp += xp;
+    addXP(xp);
+    sfx.ok();
+    vibrate(30);
+  } else {
+    game.salah++;
+    game.streak = 0;
+    game.nyawa--;
+    game.nyawaUtuh = false;
+    Store.state.progres.nyawa = game.nyawa;
+    syncHeader();
+    sfx.no();
+    vibrate([40,60,40]);
+    if (game.nyawa <= 0){
+      setTimeout(()=>renderResult(true), 900);
+      return;
+    }
+  }
+  setTimeout(nextQ, ok ? 900 : 1400);
+}
+
+function nextQ(){
+  if (!game) return;
+  game.idx++;
+  renderGame();
+}
+
+function renderResult(gagal=false){
+  const box = $('#gamePlay');
+  const total = game.data.length;
+  const dijawab = game.idx || (gagal ? game.idx+1 : total);
+  const akurasi = dijawab ? Math.round((game.benar / dijawab) * 100) : 0;
+  let bintang = 0;
+  if (!gagal){
+    if (akurasi >= 90) bintang = 3;
+    else if (akurasi >= 70) bintang = 2;
+    else if (akurasi >= 50) bintang = 1;
+  }
+  const xpTotal = game.xp;
+
+  if (!gagal){
+    const s = Store.state;
+    const prev = s.games[game.stage.id];
+    const rec = {
+      selesai:true, skor:akurasi, bintang, akurasi: akurasi/100,
+      waktu: Math.round((Date.now()-game.mulai)/1000),
+      nyawaUtuh: game.nyawaUtuh,
+    };
+    if (!prev || akurasi > prev.skor) s.games[game.stage.id] = rec;
+    else if (bintang > (prev.bintang||0)) s.games[game.stage.id] = { ...prev, bintang };
+
+    s.statistik.totalSoal += dijawab;
+    s.statistik.totalBenar += game.benar;
+    s.statistik.streakTerpanjang = Math.max(s.statistik.streakTerpanjang, game.maxStreak);
+    s.statistik.totalWaktuBelajar += rec.waktu;
+    s.progres.nyawa = 3;
+    Store.save();
+    logActivity(`Menyelesaikan Stage ${game.stage.no} dengan skor ${akurasi}%`);
+    cekBadge();
+    sfx.win();
+    confettiBurst();
+  }
+
+  box.innerHTML = `
+    <div class="result">
+      <div style="font-size:52px">${gagal ? '💔' : akurasi>=90 ? '🏅' : '🎯'}</div>
+      <h2 style="margin-top:6px">${gagal ? 'Nyawa Habis!' : 'Stage Selesai!'}</h2>
+      <div class="stars">${'★'.repeat(bintang)}${'☆'.repeat(3-bintang)}</div>
+      <div class="big">${akurasi}%</div>
+      <div class="lbl">akurasi · ${game.benar} benar dari ${dijawab} soal</div>
+      <div class="stats" style="margin-top:14px">
+        <div class="stat"><div class="v">+${xpTotal}</div><div class="k">XP Didapat</div></div>
+        <div class="stat"><div class="v">${game.maxStreak}</div><div class="k">Streak Terbaik</div></div>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <button class="btn" id="rUlang">↻ Ulangi</button>
+        ${!gagal && game.stage.no < 4 ? '<button class="btn primary" id="rLanjut">Lanjut ▶</button>' : '<button class="btn primary" id="rHome">🏠 Selesai</button>'}
+      </div>
+    </div>`;
+
+  const cur = game.stage;
+  $('#rUlang').onclick = () => { $('#gamePlay').style.display='none'; $('#gamesHome').style.display='block'; startStage(cur.id); };
+  const ln = $('#rLanjut');
+  if (ln) ln.onclick = () => { $('#gamePlay').style.display='none'; $('#gamesHome').style.display='block'; startStage(STAGES[cur.no].id); };
+  const hm = $('#rHome');
+  if (hm) hm.onclick = () => exitGame();
+
+  game = null;
+  renderGamesHome();
+}
+
+function exitGame(){
+  game = null;
+  $('#gamePlay').style.display = 'none';
+  $('#gamesHome').style.display = 'block';
+  renderGamesHome();
+}
+
+function structSVG(struct, W=320, H=180){
+  const pos = struct.pos;
+  const N = struct.atoms.length;
+  const idx = struct.idx;
+  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+  for (let i=0;i<N;i++){
+    const x = pos[i*3], y = pos[i*3+1];
+    if (x<minX)minX=x; if(x>maxX)maxX=x;
+    if (y<minY)minY=y; if(y>maxY)maxY=y;
+  }
+  const pad = 34;
+  const sc = Math.min((W-pad*2)/Math.max(maxX-minX,0.01), (H-pad*2)/Math.max(maxY-minY,0.01));
+  const cx = (minX+maxX)/2, cy = (minY+maxY)/2;
+  const tx = x => W/2 + (x-cx)*sc;
+  const ty = y => H/2 - (y-cy)*sc;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto">`;
+
+  for (const b of struct.bonds){
+    const i = idx[b.a], j = idx[b.b];
+    if (i==null||j==null) continue;
+    const elI = struct.atoms[i].el, elJ = struct.atoms[j].el;
+    if (elI === 'H' || elJ === 'H') continue;
+    const x1 = tx(pos[i*3]), y1 = ty(pos[i*3+1]);
+    const x2 = tx(pos[j*3]), y2 = ty(pos[j*3+1]);
+    const dx = x2-x1, dy = y2-y1, L = Math.hypot(dx,dy)||1;
+    const px = -dy/L, py = dx/L;
+    const gap = 3.5;
+    let lines = [];
+    if (b.order === 1) lines = [0];
+    else if (b.order === 2) lines = [-gap/2, gap/2];
+    else lines = [-gap, 0, gap];
+    for (const o of lines){
+      svg += `<line x1="${x1+px*o}" y1="${y1+py*o}" x2="${x2+px*o}" y2="${y2+py*o}" stroke="#8fa3c8" stroke-width="2" stroke-linecap="round"/>`;
+    }
+  }
+
+  for (let i=0;i<N;i++){
+    const a = struct.atoms[i];
+    if (a.el === 'H') continue;
+    const x = tx(pos[i*3]), y = ty(pos[i*3+1]);
+    const conf = ELEM[a.el] || ELEM.C;
+    const col = '#' + conf.color.toString(16).padStart(6,'0');
+    svg += `<circle cx="${x}" cy="${y}" r="11" fill="${col}" stroke="#0b1120" stroke-width="1.5"/>`;
+    svg += `<text x="${x}" y="${y+3.5}" text-anchor="middle" font-size="10" font-weight="700" fill="${a.el==='C'?'#dbeafe':'#0b1120'}" font-family="system-ui">${a.el}</text>`;
+  }
+  svg += '</svg>';
+  return svg;
+}
+
+/* ============================================================
+   13. SERTIFIKAT
+   ============================================================ */
+function bisaSertifikat(){
+  const g = Store.state.games;
+  const lulus = ['stage1','stage2','stage3','stage4'].filter(k => g[k]?.selesai).length;
+  return lulus >= 2;
+}
+
+function buatSertifikat(){
+  const s = Store.state;
+  if (!bisaSertifikat()){
+    toast('Selesaikan minimal 2 stage dulu', 'no');
+    return;
+  }
+  if (!s.siswa.nama.trim()){
+    toast('Tulis namamu dulu di kolom atas', 'no');
+    $('#namaInput').focus();
+    return;
+  }
+
+  const cvs = document.createElement('canvas');
+  cvs.width = 1200; cvs.height = 850;
+  const ctx = cvs.getContext('2d');
+
+  const grd = ctx.createLinearGradient(0, 0, 1200, 850);
+  grd.addColorStop(0, '#0a1226');
+  grd.addColorStop(0.5, '#111e3c');
+  grd.addColorStop(1, '#0a1226');
+  ctx.fillStyle = grd; ctx.fillRect(0,0,1200,850);
+
+  ctx.save();
+  ctx.globalAlpha = 0.06;
+  for (let i=0;i<18;i++){
+    const x = (i*173) % 1300 - 60;
+    const y = ((i*271) % 900) - 40;
+    hexagon(ctx, x, y, 60 + (i%3)*22, '#5eead4');
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 6;
+  ctx.strokeRect(28, 28, 1144, 794);
+  ctx.strokeStyle = 'rgba(94,234,212,.55)'; ctx.lineWidth = 2;
+  ctx.strokeRect(42, 42, 1116, 766);
+
+  drawCorner(ctx, 28, 28, 1, 1);
+  drawCorner(ctx, 1172, 28, -1, 1);
+  drawCorner(ctx, 28, 822, 1, -1);
+  drawCorner(ctx, 1172, 822, -1, -1);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#5eead4';
+  ctx.font = '600 22px system-ui, sans-serif';
+  ctx.fillText('H Y D R O Q U E S T', 600, 130);
+
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = '800 58px system-ui, sans-serif';
+  ctx.fillText('SERTIFIKAT PARTISIPASI', 600, 210);
+
+  ctx.fillStyle = '#8fa3c8';
+  ctx.font = '400 18px system-ui, sans-serif';
+  ctx.fillText('Diberikan kepada', 600, 268);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 54px system-ui, sans-serif';
+  ctx.fillText(s.siswa.nama.toUpperCase(), 600, 340);
+
+  const nw = ctx.measureText(s.siswa.nama.toUpperCase()).width;
+  ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(600 - nw/2 - 30, 358); ctx.lineTo(600 + nw/2 + 30, 358); ctx.stroke();
+
+  ctx.fillStyle = '#cbd7f0';
+  ctx.font = '400 19px system-ui, sans-serif';
+  ctx.fillText('telah berhasil menyelesaikan pembelajaran gamifikasi', 600, 402);
+  ctx.fillStyle = '#a78bfa'; ctx.font = '700 26px system-ui, sans-serif';
+  ctx.fillText('HIDROKARBON — Alkana, Alkena, Alkuna & Haloalkana', 600, 440);
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#8fa3c8'; ctx.font = '600 16px system-ui, sans-serif';
+  ctx.fillText('CAPAIAN STAGE', 140, 500);
+
+  let y = 532;
+  STAGES.forEach((st, i) => {
+    const g = s.games[st.id];
+    ctx.fillStyle = g?.selesai ? '#34d399' : '#475569';
+    ctx.font = '600 17px system-ui, sans-serif';
+    const mark = g?.selesai ? '✓' : '○';
+    ctx.fillText(`${mark}  Stage ${st.no} — ${st.nama}`, 140, y);
+    if (g?.selesai){
+      ctx.fillStyle = '#cbd7f0'; ctx.font = '400 15px system-ui, sans-serif';
+      ctx.fillText(`Skor ${g.skor}%  ·  ${'★'.repeat(g.bintang||0)}${'☆'.repeat(3-(g.bintang||0))}`, 640, y);
+    }
+    y += 30;
+  });
+
+  ctx.fillStyle = '#5eead4'; ctx.font = '700 20px system-ui, sans-serif';
+  ctx.fillText(`Total XP: ${s.progres.xp}`, 140, y + 22);
+  ctx.fillText(`Level: ${s.progres.level}`, 400, y + 22);
+  ctx.fillText(`Lencana: ${s.badges.length}/${BADGES.length}`, 620, y + 22);
+
+  if (!s.sertifikat.nomor){
+    s.sertifikat.nomor = 'SP-HC-' + Date.now().toString(36).toUpperCase();
+    s.sertifikat.tanggal = new Date().toISOString();
+    Store.save();
+  }
+  const tgl = new Date(s.sertifikat.tanggal || Date.now());
+  const tglTxt = tgl.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#8fa3c8'; ctx.font = '400 15px system-ui, sans-serif';
+  ctx.fillText('Pontianak, ' + tglTxt, 1050, 700);
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 22px system-ui, sans-serif';
+  ctx.fillText(CFG.GURU, 1050, 740);
+  ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(760, 752); ctx.lineTo(1050, 752); ctx.stroke();
+  ctx.fillStyle = '#8fa3c8'; ctx.font = '400 14px system-ui, sans-serif';
+  ctx.fillText('Guru Kimia · ' + CFG.SEKOLAH, 1050, 774);
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#475569'; ctx.font = '400 12px system-ui, sans-serif';
+  ctx.fillText('No. ' + s.sertifikat.nomor, 140, 790);
+
+  const area = $('#certArea');
+  area.innerHTML = `
+    <img class="cert-preview" src="${cvs.toDataURL('image/png')}" alt="Pratinjau sertifikat">
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn primary" id="dlCert">⬇️ Unduh PNG</button>
+      <button class="btn" id="shareCert">📤 Bagikan</button>
+    </div>`;
+  $('#dlCert').onclick = () => {
+    const a = document.createElement('a');
+    a.href = cvs.toDataURL('image/png');
+    a.download = `sertifikat-hidrokarbon-${(s.siswa.nama||'siswa').replace(/\s+/g,'-')}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('Sertifikat diunduh ✅', 'ok');
+  };
+  const sh = $('#shareCert');
+  sh.onclick = async () => {
+    if (navigator.share){
+      try{
+        const blob = await new Promise(r => cvs.toBlob(r, 'image/png'));
+        const file = new File([blob], 'sertifikat.png', { type:'image/png' });
+        await navigator.share({ files:[file], title:'Sertifikat HydroQuest', text:'Sertifikat partisipasi pembelajaran hidrokarbon' });
+      }catch(e){}
+    } else {
+      toast('Fitur bagikan tidak didukung di perangkat ini');
+    }
+  };
+  logActivity('Membuat sertifikat partisipasi');
+  toast('Sertifikat siap! 🎓', 'ok');
+}
+
+function hexagon(ctx, cx, cy, r, color){
+  ctx.beginPath();
+  for (let i=0;i<6;i++){
+    const a = Math.PI/3 * i - Math.PI/6;
+    const x = cx + r*Math.cos(a), y = cy + r*Math.sin(a);
+    i ? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+}
+
+function drawCorner(ctx, x, y, sx, sy){
+  ctx.save(); ctx.translate(x, y); ctx.scale(sx, sy);
+  ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, 55); ctx.lineTo(0, 0); ctx.lineTo(55, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(12, 62); ctx.lineTo(12, 12); ctx.lineTo(62, 12); ctx.stroke();
+  ctx.restore();
+}
+
+/* ============================================================
+   14. CONFETTI
+   ============================================================ */
+const confCvs = $('#confetti');
+const confCtx = confCvs.getContext('2d');
+let confPieces = [], confRunning = false;
+function sizeConf(){ confCvs.width = innerWidth; confCvs.height = innerHeight; }
+sizeConf(); window.addEventListener('resize', sizeConf);
+
+function confettiBurst(){
+  const W = confCvs.width, H = confCvs.height;
+  const cols = ['#5eead4','#a78bfa','#60a5fa','#fb923c','#f472b6','#fbbf24'];
+  for (let i=0;i<80;i++){
+    confPieces.push({
+      x: W/2 + (Math.random()-0.5)*W*0.5,
+      y: H*0.35 + (Math.random()-0.5)*80,
+      vx: (Math.random()-0.5)*7,
+      vy: -Math.random()*9 - 3,
+      g: 0.3 + Math.random()*0.15,
+      s: 5 + Math.random()*7,
+      col: cols[Math.floor(Math.random()*cols.length)],
+      rot: Math.random()*Math.PI*2,
+      vr: (Math.random()-0.5)*0.3,
+      life: 120 + Math.random()*60,
+    });
+  }
+  if (!confRunning){ confRunning = true; confLoop(); }
+}
+
+function confLoop(){
+  confCtx.clearRect(0,0,confCvs.width,confCvs.height);
+  confPieces = confPieces.filter(p => p.life > 0 && p.y < confCvs.height + 60);
+  for (const p of confPieces){
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life--;
+    confCtx.save();
+    confCtx.translate(p.x, p.y); confCtx.rotate(p.rot);
+    confCtx.fillStyle = p.col;
+    confCtx.fillRect(-p.s/2, -p.s/4, p.s, p.s/2);
+    confCtx.restore();
+  }
+  if (confPieces.length) requestAnimationFrame(confLoop);
+  else { confRunning = false; confCtx.clearRect(0,0,confCvs.width,confCvs.height); }
+}
+
+/* ============================================================
+   15. MODAL
+   ============================================================ */
+function modal(html, onOpen){
+  const m = $('#modal'), b = $('#modalBox');
+  b.innerHTML = html;
+  m.classList.add('on');
+  if (onOpen) onOpen(b);
+}
+function closeModal(){ $('#modal').classList.remove('on'); }
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+/* ============================================================
+   16. PROFIL
+   ============================================================ */
+function renderProfil(){
+  const s = Store.state;
+  const cur = s.progres.xp - xpForLevel(s.progres.level-1);
+  const need = xpForLevel(s.progres.level) - xpForLevel(s.progres.level-1);
+  $('#pLvTxt').textContent = 'Level ' + s.progres.level;
+  $('#pXpTxt').textContent = `${cur} / ${need} XP`;
+  $('#pPb').style.width = clamp((cur/need)*100, 0, 100) + '%';
+
+  const ni = $('#namaInput');
+  if (document.activeElement !== ni) ni.value = s.siswa.nama || '';
+  $('#profilSub').textContent = `${s.siswa.kelas} · ${s.siswa.sekolah}`;
+
+  const st = s.statistik;
+  const akurasi = st.totalSoal ? Math.round((st.totalBenar/st.totalSoal)*100) : 0;
+  const stageDone = ['stage1','stage2','stage3','stage4'].filter(k=>s.games[k]?.selesai).length;
+  const menit = Math.round(st.totalWaktuBelajar / 60);
+  $('#statsBox').innerHTML = `
+    <div class="stat"><div class="v">${s.progres.xp}</div><div class="k">Total XP</div></div>
+    <div class="stat"><div class="v">${s.progres.level}</div><div class="k">Level</div></div>
+    <div class="stat"><div class="v">${stageDone}/4</div><div class="k">Stage Selesai</div></div>
+    <div class="stat"><div class="v">${akurasi}%</div><div class="k">Akurasi</div></div>
+    <div class="stat"><div class="v">${st.totalSoal}</div><div class="k">Soal Dijawab</div></div>
+    <div class="stat"><div class="v">${st.streakTerpanjang}</div><div class="k">Streak Terbaik</div></div>
+    <div class="stat"><div class="v">${menit}</div><div class="k">Menit Belajar</div></div>
+    <div class="stat"><div class="v">${s.progres.molekulDisimpan.length}</div><div class="k">Molekul Disimpan</div></div>`;
+
+  $('#badgeBox').innerHTML = BADGES.map(b => {
+    const punya = s.badges.includes(b.id);
+    return `<div class="badge ${punya?'':'locked'}">
+      <div class="b">${b.ikon}</div>
+      <div class="n">${esc(b.nama)}</div>
+      <div class="d">${esc(b.desc)}</div>
+    </div>`;
+  }).join('');
+
+  const bisa = bisaSertifikat();
+  $('#certInfo').textContent = bisa
+    ? 'Kamu memenuhi syarat! Tekan tombol untuk membuat sertifikat.'
+    : `Selesaikan minimal 2 stage untuk membuka sertifikat (${stageDone}/2).`;
+  $('#btnCert').disabled = !bisa;
+
+  $('#riwayatBox').innerHTML = s.riwayatAktivitas.length
+    ? s.riwayatAktivitas.map(r => {
+        const d = new Date(r.waktu);
+        const t = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+        return `<div class="it"><span class="tm">${t}</span><span>${esc(r.teks)}</span></div>`;
+      }).join('')
+    : '<div class="tiny">Belum ada aktivitas.</div>';
+
+  updateStoreInfo();
+}
+
+function updateStoreInfo(){
+  const el = $('#storeInfo');
+  if (!el) return;
+  try{
+    const raw = localStorage.getItem(CFG.KEY) || '';
+    const kb = (new Blob([raw]).size / 1024).toFixed(1);
+    const s = Store.state._savedAt ? new Date(Store.state._savedAt).toLocaleString('id-ID') : '—';
+    el.textContent = `Ukuran data: ${kb} KB · Terakhir disimpan: ${s}`;
+  }catch(e){ el.textContent = 'Penyimpanan tidak tersedia di perangkat ini.'; }
+}
+
+/* ============================================================
+   17. EVENT BINDINGS
+   ============================================================ */
+function bindAll(){
+  $$('#tabbar .tab').forEach(b => b.onclick = () => go(b.dataset.tab));
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-goto]');
+    if (g) go(g.dataset.goto);
+  });
+
+  $('#namaInput').addEventListener('input', e => {
+    Store.state.siswa.nama = e.target.value;
+    Store.save();
+  });
+
+  $('#materiList').addEventListener('click', e => {
+    const t = e.target.closest('[data-toggle]');
+    if (t){
+      const acc = t.parentElement;
+      acc.classList.toggle('on');
+      sfx.tap();
+      return;
+    }
+    const r = e.target.closest('[data-reveal]');
+    if (r){
+      const c = r.closest('.contoh');
+      c.classList.add('show');
+      r.style.display = 'none';
+      sfx.tap();
+      return;
+    }
+    const m = e.target.closest('[data-mark]');
+    if (m){
+      const id = m.dataset.mark;
+      const s = Store.state;
+      if (!s.progres.materiDibaca.includes(id)){
+        s.progres.materiDibaca.push(id);
+        Store.save();
+        addXP(15);
+        logActivity(`Membaca materi: ${MATERI.find(x=>x.id===id)?.judul||id}`);
+        cekBadge();
+        renderMateri();
+        renderHome();
+      }
+    }
+  });
+
+  $$('.stepper [data-n]').forEach(b => b.onclick = () => {
+    builder.n = clamp(builder.n + (+b.dataset.n), 1, 10);
+    builder.unsat = []; builder.subs = builder.subs.filter(s => s.pos <= builder.n);
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bUnsat').addEventListener('click', e => {
+    const b = e.target.closest('[data-u]'); if (!b) return;
+    const v = +b.dataset.u;
+    builder.unsat = v === 0 ? [] : [{ pos:1, order:v }];
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bUnsatPos').addEventListener('click', e => {
+    const b = e.target.closest('[data-upos]'); if (!b) return;
+    builder.unsat = [{ pos:+b.dataset.upos, order:builder.unsat[0]?.order||2 }];
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bBranchType').addEventListener('click', e => {
+    const b = e.target.closest('[data-bt]'); if (!b) return;
+    builder.branchType = b.dataset.bt;
+    sfx.tap(); renderBuilder();
+  });
+  $('#bBranchPos').addEventListener('click', e => {
+    const b = e.target.closest('[data-bpos]'); if (!b) return;
+    builder.subs.push({ pos:+b.dataset.bpos, type:builder.branchType });
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bHaloType').addEventListener('click', e => {
+    const b = e.target.closest('[data-ht]'); if (!b) return;
+    builder.haloType = b.dataset.ht;
+    sfx.tap(); renderBuilder();
+  });
+  $('#bHaloPos').addEventListener('click', e => {
+    const b = e.target.closest('[data-hpos]'); if (!b) return;
+    builder.subs.push({ pos:+b.dataset.hpos, type:builder.haloType });
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bSubList').addEventListener('click', e => {
+    const b = e.target.closest('[data-delsub]'); if (!b) return;
+    builder.subs.splice(+b.dataset.delsub, 1);
+    sfx.tap(); renderBuilder(); applyBuilder();
+  });
+  $('#bReset').onclick = () => { builder = { n:3, unsat:[], subs:[], branchType:null, haloType:null }; sfx.tap(); renderBuilder(); applyBuilder(); };
+  $('#bRandom').onclick = () => {
+    const n = 1 + Math.floor(Math.random()*8);
+    const unsat = [];
+    if (n >= 2 && Math.random() < 0.35) unsat.push({ pos: 1 + Math.floor(Math.random()*(n-1)), order: Math.random()<0.7?2:3 });
+    const subs = [];
+    const jml = Math.floor(Math.random()*3);
+    for (let i=0;i<jml;i++){
+      const pos = 1 + Math.floor(Math.random()*n);
+      const r = Math.random();
+      if (r < 0.45) subs.push({ pos, type:['F','Cl','Br','I'][Math.floor(Math.random()*4)] });
+      else if (r < 0.8) subs.push({ pos, type:'methyl' });
+      else subs.push({ pos, type:'ethyl' });
+    }
+    builder = { n, unsat, subs, branchType:null, haloType:null };
+    sfx.tap(); renderBuilder(); applyBuilder();
+  };
+  $('#bSave').onclick = () => {
+    const st = window._lastStruct;
+    if (!st) return;
+    const nama = iupacName(st);
+    const rumus = formulaOf(st);
+    const list = Store.state.progres.molekulDisimpan;
+    if (list.some(m => m.nama === nama && m.rumus === rumus)){
+      toast('Molekul ini sudah ada di koleksi');
+      return;
+    }
+    list.push({ nama, rumus, spec: window._lastSpec });
+    if (list.length > 20) list.shift();
+    Store.save();
+    addXP(10);
+    cekBadge();
+    renderPresets();
+    toast('Molekul disimpan ke koleksi ✅', 'ok');
+    logActivity(`Menyimpan molekul: ${nama}`);
+  };
+
+  $('#presetList').addEventListener('click', e => {
+    const b = e.target.closest('[data-preset]'); if (!b) return;
+    const p = PRESETS[+b.dataset.preset];
+    setMoleculeFromSpec(p.spec, p.nama);
+    sfx.tap();
+    toast('Menampilkan ' + p.nama);
+  });
+  $('#myMols').addEventListener('click', e => {
+    const b = e.target.closest('[data-mymol]'); if (!b) return;
+    const m = Store.state.progres.molekulDisimpan[+b.dataset.mymol];
+    if (m?.spec){ setMoleculeFromSpec(m.spec, m.nama); sfx.tap(); toast('Menampilkan ' + m.nama); }
+    else toast('Struktur molekul ini tidak tersimpan lengkap', 'no');
+  });
+
+  $('#btnRotate').onclick = () => {
+    Store.state.pengaturan.autoRotate = !Store.state.pengaturan.autoRotate;
+    Store.save();
+    $('#btnRotate').classList.toggle('on', Store.state.pengaturan.autoRotate);
+    sfx.tap();
+  };
+  $('#btnMode').onclick = () => {
+    viewer.mode = viewer.mode === 'ball' ? 'space' : 'ball';
+    $('#btnMode').textContent = viewer.mode === 'ball' ? '⚪ Ball & Stick' : '🔵 Space Filling';
+    $('#btnMode').classList.toggle('on', viewer.mode === 'space');
+    if (viewer.curStruct) buildMolecule3D(viewer.curStruct);
+    sfx.tap();
+  };
+  $('#btnLabels').onclick = () => {
+    viewer.showLabels = !viewer.showLabels;
+    $('#btnLabels').classList.toggle('on', viewer.showLabels);
+    if (viewer.curStruct) buildMolecule3D(viewer.curStruct);
+    sfx.tap();
+  };
+  $('#btnSnap').onclick = () => {
+    if (!viewer.ready) return;
+    viewer.renderer.render(viewer.scene, viewer.camera);
+    const a = document.createElement('a');
+    a.href = viewer.renderer.domElement.toDataURL('image/png');
+    a.download = `molekul-${Date.now()}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('Gambar 3D diunduh 📷', 'ok');
+  };
+
+  $('#stageList').addEventListener('click', e => {
+    const s = e.target.closest('[data-stage]'); if (!s) return;
+    startStage(s.dataset.stage);
+  });
+
+  $('#btnCert').onclick = buatSertifikat;
+  $('#btnExport').onclick = () => Store.export();
+  $('#btnImport').onclick = () => $('#fileImport').click();
+  $('#fileImport').addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    modal(`
+      <h3>⚠️ Impor Data</h3>
+      <p class="muted">Data saat ini akan <b>ditimpa</b> oleh isi file. Lanjutkan?</p>
+      <div class="grid2" style="margin-top:12px">
+        <button class="btn" id="impCancel">Batal</button>
+        <button class="btn primary" id="impOk">Lanjutkan</button>
+      </div>`);
+    $('#impCancel').onclick = closeModal;
+    $('#impOk').onclick = async () => {
+      try{
+        await Store.import(f);
+        closeModal();
+        toast('Data berhasil diimpor ✅', 'ok');
+        refreshAll();
+      }catch(err){
+        closeModal();
+        toast('Gagal impor: ' + err.message, 'no');
+      }
+      e.target.value = '';
+    };
+  });
+
+  $('#btnReset').onclick = () => {
+    modal(`
+      <h3>🗑️ Reset Progres</h3>
+      <p class="muted">Seluruh XP, level, lencana, dan riwayat akan dihapus permanen.</p>
+      <p class="tiny" style="margin-top:8px">Ketik <b>HAPUS</b> untuk konfirmasi:</p>
+      <input type="text" id="resetWord" placeholder="HAPUS" style="margin-top:6px">
+      <div class="grid2" style="margin-top:12px">
+        <button class="btn" id="rsCancel">Batal</button>
+        <button class="btn warn" id="rsOk" disabled>Hapus Semua</button>
+      </div>`);
+    $('#rsCancel').onclick = closeModal;
+    const inp = $('#resetWord'), ok = $('#rsOk');
+    inp.addEventListener('input', () => { ok.disabled = inp.value.trim().toUpperCase() !== 'HAPUS'; });
+    ok.onclick = () => {
+      Store.reset();
+      closeModal();
+      toast('Progres direset', 'ok');
+      refreshAll();
+    };
+  };
+
+  $('#setSuara').onclick = () => {
+    Store.state.pengaturan.suara = !Store.state.pengaturan.suara;
+    Store.save();
+    $('#setSuara').textContent = Store.state.pengaturan.suara ? 'Aktif' : 'Nonaktif';
+    $('#setSuara').classList.toggle('on', Store.state.pengaturan.suara);
+    if (Store.state.pengaturan.suara) sfx.tap();
+  };
+  $('#setRotate').onclick = () => {
+    Store.state.pengaturan.autoRotate = !Store.state.pengaturan.autoRotate;
+    Store.save();
+    $('#setRotate').textContent = Store.state.pengaturan.autoRotate ? 'Aktif' : 'Nonaktif';
+    $('#setRotate').classList.toggle('on', Store.state.pengaturan.autoRotate);
+    $('#btnRotate').classList.toggle('on', Store.state.pengaturan.autoRotate);
+    sfx.tap();
+  };
+}
+
+/* ============================================================
+   18. REFRESH ALL
+   ============================================================ */
+function refreshAll(){
+  syncHeader();
+  renderHome();
+  renderMateri();
+  renderBuilder();
+  renderPresets();
+  renderGamesHome();
+  renderProfil();
+  applyBuilder();
+  const s = Store.state;
+  $('#setSuara').textContent = s.pengaturan.suara ? 'Aktif' : 'Nonaktif';
+  $('#setSuara').classList.toggle('on', s.pengaturan.suara);
+  $('#setRotate').textContent = s.pengaturan.autoRotate ? 'Aktif' : 'Nonaktif';
+  $('#setRotate').classList.toggle('on', s.pengaturan.autoRotate);
+  $('#btnRotate').classList.toggle('on', s.pengaturan.autoRotate);
+  viewer.autoRotate = s.pengaturan.autoRotate;
+}
+
+/* ============================================================
+   19. INIT
+   ============================================================ */
+(function init(){
+  Store.load();
+  bindAll();
+  refreshAll();
+  initViewer();
+
+  window.addEventListener('beforeunload', () => Store.saveNow());
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) Store.saveNow();
+  });
+
+  setTimeout(() => {
+    const s = Store.state;
+    if (!s.siswa.nama){
+      toast('👋 Selamat datang! Tulis namamu di tab Profil ya');
+    } else {
+      toast(`👋 Hai ${s.siswa.nama}, lanjutkan misimu!`);
+    }
+  }, 700);
+
+  console.log('%c⬡ HydroQuest siap!','color:#5eead4;font-weight:bold;font-size:14px');
+})();
+</script>
+</body>
+</html>
